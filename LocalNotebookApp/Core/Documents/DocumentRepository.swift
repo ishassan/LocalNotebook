@@ -12,6 +12,7 @@ protocol DocumentRepositoryProtocol: Sendable {
     func saveAutosave(text: String, for id: UUID) async throws
     func renameDocument(id: UUID, to newName: String) async throws -> DocumentSnapshot
     func duplicateDocument(id: UUID, clearOutputs: Bool) async throws -> DocumentSnapshot
+    func deleteDocuments(ids: [UUID]) async throws
     func exportDocument(id: UUID, to destinationURL: URL, clearOutputs: Bool) async throws
 }
 
@@ -173,6 +174,30 @@ actor DocumentRepository: DocumentRepositoryProtocol {
         return duplicated
     }
 
+    func deleteDocuments(ids: [UUID]) async throws {
+        try ensureLayout()
+        let idSet = Set(ids)
+        guard !idSet.isEmpty else { return }
+
+        let registry = try loadRegistry()
+        let doomedSnapshots = registry.filter { idSet.contains($0.id) }
+
+        for snapshot in doomedSnapshots {
+            let documentURL = localURL(for: snapshot)
+            if fileManager.fileExists(atPath: documentURL.path) {
+                try fileManager.removeItem(at: documentURL)
+            }
+
+            try removeAutosave(for: snapshot)
+
+            if let bookmarkKey = snapshot.externalBookmarkKey {
+                bookmarkStore.removeBookmark(for: bookmarkKey)
+            }
+        }
+
+        try persist(registry: registry.filter { !idSet.contains($0.id) })
+    }
+
     func exportDocument(id: UUID, to destinationURL: URL, clearOutputs: Bool) async throws {
         let snapshot = try snapshot(for: id)
         let startedAccess = destinationURL.startAccessingSecurityScopedResource()
@@ -215,6 +240,10 @@ actor DocumentRepository: DocumentRepositoryProtocol {
         } else {
             registry.append(snapshot)
         }
+        try persist(registry: registry)
+    }
+
+    private func persist(registry: [DocumentSnapshot]) throws {
         let data = try JSONEncoder.pretty.encode(registry.sorted(by: { $0.lastOpenedAt > $1.lastOpenedAt }))
         try data.write(to: metadataURL, options: .atomic)
     }

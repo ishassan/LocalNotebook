@@ -55,6 +55,29 @@ final class LocalNotebookUITests: XCTestCase {
         XCTAssertTrue(documentRow(named: "UITestNotebook Copy").waitForExistence(timeout: 5))
     }
 
+    func testDeleteFromBrowseSelection() {
+        app.buttons["import-sample-notebook"].tap()
+
+        let row = documentRow(named: "UITestNotebook")
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+
+        row.press(forDuration: 1.0)
+        app.buttons["Delete"].tap()
+        app.alerts.buttons["Delete"].tap()
+
+        XCTAssertFalse(row.waitForExistence(timeout: 2))
+    }
+
+    func testDeleteFromNotebookMenu() {
+        openSampleNotebook()
+        app.buttons["notebook-menu"].tap()
+        app.buttons["Delete"].tap()
+        app.alerts.buttons["Delete"].tap()
+
+        let row = documentRow(named: "UITestNotebook")
+        XCTAssertFalse(row.waitForExistence(timeout: 2))
+    }
+
     private func openSampleNotebook() {
         app.buttons["import-sample-notebook"].tap()
         documentRow(named: "UITestNotebook").tap()

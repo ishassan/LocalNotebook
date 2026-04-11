@@ -5,6 +5,12 @@ struct FilesView: View {
     @Environment(AppSessionStore.self) private var appSession
 
     @State private var importerShown = false
+    @State private var selectedDocumentIDs: Set<UUID> = []
+    @State private var deleteConfirmationShown = false
+
+    private var isSelectionMode: Bool {
+        !selectedDocumentIDs.isEmpty
+    }
 
     var body: some View {
         ScrollView {
@@ -21,6 +27,21 @@ struct FilesView: View {
         .navigationTitle("Browse")
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbar {
+            if isSelectionMode {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") {
+                        selectedDocumentIDs.removeAll()
+                    }
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Delete", role: .destructive) {
+                        deleteConfirmationShown = true
+                    }
+                }
+            }
+        }
         .refreshable {
             await appSession.refresh()
         }
@@ -34,6 +55,14 @@ struct FilesView: View {
             if case .success(let url) = result {
                 Task { _ = await appSession.importDocument(from: url) }
             }
+        }
+        .alert(deleteAlertTitle, isPresented: $deleteConfirmationShown) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                Task { await deleteSelectedDocuments() }
+            }
+        } message: {
+            Text("This action cannot be undone.")
         }
     }
 
@@ -108,9 +137,19 @@ struct FilesView: View {
 
     private func documentSection(title: String, documents: [DocumentSnapshot]) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(.white)
+            HStack {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(.white)
+
+                Spacer()
+
+                if isSelectionMode {
+                    Text("\(selectedDocumentIDs.count) selected")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(NotebookTheme.accent)
+                }
+            }
 
             if documents.isEmpty {
                 ContentUnavailableView(
@@ -125,10 +164,18 @@ struct FilesView: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(documents) { snapshot in
-                        NavigationLink(value: snapshot.id) {
-                            DocumentCard(snapshot: snapshot)
+                        DocumentCard(
+                            snapshot: snapshot,
+                            isSelecting: isSelectionMode,
+                            isSelected: selectedDocumentIDs.contains(snapshot.id)
+                        )
+                        .contentShape(RoundedRectangle(cornerRadius: 18))
+                        .onTapGesture {
+                            handleDocumentTap(snapshot)
                         }
-                        .buttonStyle(.plain)
+                        .onLongPressGesture {
+                            beginSelection(with: snapshot.id)
+                        }
                         .accessibilityIdentifier("document-\(snapshot.displayName)")
                     }
                 }
@@ -186,13 +233,52 @@ struct FilesView: View {
         guard let url = Bundle.main.url(forResource: named, withExtension: ext, subdirectory: "SampleNotebooks") else { return }
         _ = await appSession.importDocument(from: url)
     }
+
+    private var deleteAlertTitle: String {
+        selectedDocumentIDs.count == 1 ? "Delete Selected File?" : "Delete \(selectedDocumentIDs.count) Selected Files?"
+    }
+
+    private func handleDocumentTap(_ snapshot: DocumentSnapshot) {
+        if isSelectionMode {
+            toggleSelection(for: snapshot.id)
+        } else {
+            appSession.filesNavigationPath.append(snapshot.id)
+        }
+    }
+
+    private func beginSelection(with documentID: UUID) {
+        selectedDocumentIDs.insert(documentID)
+    }
+
+    private func toggleSelection(for documentID: UUID) {
+        if selectedDocumentIDs.contains(documentID) {
+            selectedDocumentIDs.remove(documentID)
+        } else {
+            selectedDocumentIDs.insert(documentID)
+        }
+    }
+
+    private func deleteSelectedDocuments() async {
+        let deleted = await appSession.deleteDocuments(ids: selectedDocumentIDs)
+        if deleted {
+            selectedDocumentIDs.removeAll()
+        }
+    }
 }
 
 struct DocumentCard: View {
     let snapshot: DocumentSnapshot
+    var isSelecting: Bool = false
+    var isSelected: Bool = false
 
     var body: some View {
         HStack(spacing: 14) {
+            if isSelecting {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(isSelected ? NotebookTheme.accent : Color.white.opacity(0.28))
+            }
+
             Image(systemName: snapshot.kind.iconName)
                 .font(.system(size: 19, weight: .semibold))
                 .foregroundStyle(NotebookTheme.accent)
@@ -214,11 +300,20 @@ struct DocumentCard: View {
 
             Spacer()
 
-            Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.secondary)
+            if !isSelecting {
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(16)
-        .background(Color.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 18))
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(isSelected ? NotebookTheme.accent.opacity(0.18) : Color.white.opacity(0.05))
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(isSelected ? NotebookTheme.accent.opacity(0.75) : .clear, lineWidth: 1)
+        }
     }
 }

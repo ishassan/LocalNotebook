@@ -4,6 +4,7 @@ struct NotebookEditorView: View {
     @Bindable var store: DocumentEditorStore
     @Environment(AppSessionStore.self) private var appSession
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dismiss) private var dismiss
 
     @State private var renamePromptShown = false
     @State private var renameText = ""
@@ -21,6 +22,7 @@ struct NotebookEditorView: View {
     @State private var replaceText = ""
     @State private var searchMatchIDs: [String] = []
     @State private var searchMatchIndex = 0
+    @State private var deleteConfirmationShown = false
 
     private var cells: [NotebookCell] {
         store.notebook?.cells ?? []
@@ -210,6 +212,9 @@ struct NotebookEditorView: View {
                         Button("Clear Outputs") {
                             store.clearOutputs()
                         }
+                        Button("Delete", role: .destructive) {
+                            deleteConfirmationShown = true
+                        }
                     } label: {
                         ZStack {
                             Circle()
@@ -229,6 +234,18 @@ struct NotebookEditorView: View {
                 Button("Save") {
                     Task { await store.rename(to: renameText) }
                 }
+            }
+            .alert(deleteAlertTitle, isPresented: $deleteConfirmationShown) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    Task {
+                        if await store.deleteDocument() {
+                            dismiss()
+                        }
+                    }
+                }
+            } message: {
+                Text("This action cannot be undone.")
             }
             .alert("Error", isPresented: Binding(get: { store.errorMessage != nil }, set: { _ in store.errorMessage = nil })) {
                 Button("OK", role: .cancel) {}
@@ -338,6 +355,10 @@ struct NotebookEditorView: View {
             cellActionMenu(for: cell.id)
         }
         .id(cell.id)
+    }
+
+    private var deleteAlertTitle: String {
+        "Delete \(store.snapshot?.displayName ?? "Notebook")?"
     }
 
     @ViewBuilder

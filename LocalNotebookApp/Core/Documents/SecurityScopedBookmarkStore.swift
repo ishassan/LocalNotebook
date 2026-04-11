@@ -23,4 +23,10 @@ final class SecurityScopedBookmarkStore: @unchecked Sendable {
         var isStale = false
         return try? URL(resolvingBookmarkData: data, options: [.withoutUI], relativeTo: nil, bookmarkDataIsStale: &isStale)
     }
+
+    func removeBookmark(for key: String) {
+        var all = userDefaults.dictionary(forKey: storageKey) as? [String: Data] ?? [:]
+        all.removeValue(forKey: key)
+        userDefaults.set(all, forKey: storageKey)
+    }
 }

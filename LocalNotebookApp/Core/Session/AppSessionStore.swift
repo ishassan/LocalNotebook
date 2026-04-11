@@ -87,6 +87,21 @@ final class AppSessionStore {
         }
     }
 
+    func deleteDocuments(ids: Set<UUID>) async -> Bool {
+        guard !ids.isEmpty else { return true }
+
+        do {
+            try await repository.deleteDocuments(ids: Array(ids))
+            filesNavigationPath.removeAll { ids.contains($0) }
+            runningSessions.removeAll { ids.contains($0.documentID) }
+            await refresh()
+            return true
+        } catch {
+            lastError = error.localizedDescription
+            return false
+        }
+    }
+
     func registerSession(documentID: UUID, title: String, kind: DocumentKind, state: KernelState) {
         let summary = RunningSessionSummary(documentID: documentID, title: title, kind: kind, state: state, updatedAt: Date())
         if let index = runningSessions.firstIndex(where: { $0.documentID == documentID }) {

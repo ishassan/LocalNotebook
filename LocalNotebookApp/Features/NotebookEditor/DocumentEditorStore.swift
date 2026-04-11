@@ -133,6 +133,16 @@ final class DocumentEditorStore {
         }
     }
 
+    func deleteDocument() async -> Bool {
+        guard let snapshot else { return false }
+
+        let didDelete = await appSession.deleteDocuments(ids: Set([snapshot.id]))
+        if !didDelete {
+            errorMessage = appSession.lastError
+        }
+        return didDelete
+    }
+
     func exportDocumentData() throws -> ExportFileDocument {
         guard let snapshot else {
             throw CocoaError(.fileNoSuchFile)
