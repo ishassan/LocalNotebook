@@ -4,6 +4,7 @@ import contextlib
 import io
 import json
 import os
+import subprocess
 import traceback
 
 _SESSIONS = {}
@@ -88,6 +89,44 @@ def _temporary_cwd(path):
         os.chdir(previous)
 
 
+def _is_shell_cell(code: str) -> bool:
+    non_empty_lines = [line for line in code.splitlines() if line.strip()]
+    return bool(non_empty_lines) and all(line.lstrip().startswith("!") for line in non_empty_lines)
+
+
+def _execute_shell_cell(code: str) -> list[dict]:
+    stdout_chunks = []
+    stderr_chunks = []
+
+    for line in code.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        command = line.lstrip()[1:].lstrip()
+        if not command:
+            raise ValueError("Missing shell command after '!'.")
+
+        try:
+            completed = subprocess.run(command, shell=True, capture_output=True, text=True)
+        except OSError as exc:
+            raise RuntimeError(f"Shell command execution is unavailable: {exc}") from exc
+
+        if completed.stdout:
+            stdout_chunks.append(completed.stdout)
+        if completed.stderr:
+            stderr_chunks.append(completed.stderr)
+        if completed.returncode != 0 and not completed.stderr:
+            stderr_chunks.append(f"Command exited with status {completed.returncode}: {command}\n")
+
+    outputs = []
+    if stdout_chunks:
+        outputs.append({"output_type": "stream", "name": "stdout", "text": "".join(stdout_chunks)})
+    if stderr_chunks:
+        outputs.append({"output_type": "stream", "name": "stderr", "text": "".join(stderr_chunks)})
+    return outputs
+
+
 def execute_code(session_id: str, code: str, working_directory: str | None = None) -> str:
     namespace = _ensure_session(session_id)
     _EXECUTION_COUNTS[session_id] += 1
@@ -97,23 +136,26 @@ def execute_code(session_id: str, code: str, working_directory: str | None = Non
     outputs = []
 
     try:
-        parsed = ast.parse(code, mode="exec")
-        expression = None
-        body = parsed.body
-        if body and isinstance(body[-1], ast.Expr):
-            expression = ast.Expression(body.pop().value)
-            ast.fix_missing_locations(expression)
-
-        module = ast.Module(body=body, type_ignores=[])
-        ast.fix_missing_locations(module)
-
         with _temporary_cwd(working_directory), contextlib.redirect_stdout(stdout_buffer), contextlib.redirect_stderr(stderr_buffer):
-            exec(compile(module, "<cell>", "exec"), namespace, namespace)
-            if expression is not None:
-                result = eval(compile(expression, "<cell>", "eval"), namespace, namespace)
-                display = _capture_rich_result(result)
-                if display:
-                    outputs.append(display)
+            if _is_shell_cell(code):
+                outputs.extend(_execute_shell_cell(code))
+            else:
+                parsed = ast.parse(code, mode="exec")
+                expression = None
+                body = parsed.body
+                if body and isinstance(body[-1], ast.Expr):
+                    expression = ast.Expression(body.pop().value)
+                    ast.fix_missing_locations(expression)
+
+                module = ast.Module(body=body, type_ignores=[])
+                ast.fix_missing_locations(module)
+
+                exec(compile(module, "<cell>", "exec"), namespace, namespace)
+                if expression is not None:
+                    result = eval(compile(expression, "<cell>", "eval"), namespace, namespace)
+                    display = _capture_rich_result(result)
+                    if display:
+                        outputs.append(display)
     except Exception as exc:
         outputs.append(
             {
