@@ -5,6 +5,7 @@
 @implementation PythonBridge
 
 static BOOL sInitialized = NO;
+static PyThreadState *sInterpreterThreadState = NULL;
 
 + (BOOL)appendPath:(NSString *)path toList:(PyWideStringList *)list error:(NSError * _Nullable __autoreleasing *)error {
     wchar_t *decoded = Py_DecodeLocale(path.UTF8String, NULL);
@@ -65,79 +66,84 @@ static BOOL sInitialized = NO;
 }
 
 + (BOOL)initializeIfNeeded:(NSString *)resourcePath error:(NSError * _Nullable __autoreleasing *)error {
-    if (sInitialized) {
-        return YES;
-    }
-
-    NSString *pythonHome = [resourcePath stringByAppendingPathComponent:@"python"];
-    NSString *pythonLib = [self pythonLibPathForResourcePath:resourcePath];
-    NSString *dynload = [pythonLib stringByAppendingPathComponent:@"lib-dynload"];
-    NSString *sitePackages = [pythonLib stringByAppendingPathComponent:@"site-packages"];
-    NSString *appPath = [resourcePath stringByAppendingPathComponent:@"PythonApp"];
-
-    PyStatus status;
-    PyPreConfig preconfig;
-    PyPreConfig_InitPythonConfig(&preconfig);
-    preconfig.utf8_mode = 1;
-    status = Py_PreInitialize(&preconfig);
-    if (PyStatus_Exception(status)) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"PythonBridge" code:10 userInfo:@{NSLocalizedDescriptionKey: @"Py_PreInitialize failed."}];
+    @synchronized(self) {
+        if (sInitialized) {
+            return YES;
         }
-        return NO;
-    }
 
-    PyConfig config;
-    PyConfig_InitPythonConfig(&config);
-    config.buffered_stdio = 0;
-    config.write_bytecode = 0;
-    config.install_signal_handlers = 1;
-    config.module_search_paths_set = 1;
+        NSString *pythonHome = [resourcePath stringByAppendingPathComponent:@"python"];
+        NSString *pythonLib = [self pythonLibPathForResourcePath:resourcePath];
+        NSString *dynload = [pythonLib stringByAppendingPathComponent:@"lib-dynload"];
+        NSString *sitePackages = [pythonLib stringByAppendingPathComponent:@"site-packages"];
+        NSString *appPath = [resourcePath stringByAppendingPathComponent:@"PythonApp"];
 
-    wchar_t *homeValue = Py_DecodeLocale(pythonHome.UTF8String, NULL);
-    status = PyConfig_SetString(&config, &config.home, homeValue);
-    PyMem_RawFree(homeValue);
-    if (PyStatus_Exception(status)) {
-        PyConfig_Clear(&config);
-        if (error) {
-            *error = [NSError errorWithDomain:@"PythonBridge" code:11 userInfo:@{NSLocalizedDescriptionKey: @"Unable to set PYTHONHOME."}];
-        }
-        return NO;
-    }
-
-    NSArray<NSString *> *paths = @[pythonLib, dynload, appPath, sitePackages];
-    for (NSString *path in paths) {
-        if (![self appendPath:path toList:&config.module_search_paths error:error]) {
-            PyConfig_Clear(&config);
+        PyStatus status;
+        PyPreConfig preconfig;
+        PyPreConfig_InitPythonConfig(&preconfig);
+        preconfig.utf8_mode = 1;
+        status = Py_PreInitialize(&preconfig);
+        if (PyStatus_Exception(status)) {
+            if (error) {
+                *error = [NSError errorWithDomain:@"PythonBridge" code:10 userInfo:@{NSLocalizedDescriptionKey: @"Py_PreInitialize failed."}];
+            }
             return NO;
         }
-    }
 
-    status = Py_InitializeFromConfig(&config);
-    PyConfig_Clear(&config);
-    if (PyStatus_Exception(status)) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"PythonBridge" code:12 userInfo:@{NSLocalizedDescriptionKey: @"Py_InitializeFromConfig failed."}];
-        }
-        return NO;
-    }
+        PyConfig config;
+        PyConfig_InitPythonConfig(&config);
+        config.buffered_stdio = 0;
+        config.write_bytecode = 0;
+        config.install_signal_handlers = 0;
+        config.module_search_paths_set = 1;
 
-    PyRun_SimpleString("import sys\nsys.dont_write_bytecode = True\n");
-    PyGILState_STATE state = PyGILState_Ensure();
-    PyObject *module = PyImport_ImportModule("kernel_bridge");
-    if (!module) {
-        NSString *message = [self pythonErrorMessage];
-        if (error) {
-            *error = [NSError errorWithDomain:@"PythonBridge" code:13 userInfo:@{NSLocalizedDescriptionKey: message}];
+        wchar_t *homeValue = Py_DecodeLocale(pythonHome.UTF8String, NULL);
+        status = PyConfig_SetString(&config, &config.home, homeValue);
+        PyMem_RawFree(homeValue);
+        if (PyStatus_Exception(status)) {
+            PyConfig_Clear(&config);
+            if (error) {
+                *error = [NSError errorWithDomain:@"PythonBridge" code:11 userInfo:@{NSLocalizedDescriptionKey: @"Unable to set PYTHONHOME."}];
+            }
+            return NO;
         }
+
+        NSArray<NSString *> *paths = @[pythonLib, dynload, appPath, sitePackages];
+        for (NSString *path in paths) {
+            if (![self appendPath:path toList:&config.module_search_paths error:error]) {
+                PyConfig_Clear(&config);
+                return NO;
+            }
+        }
+
+        status = Py_InitializeFromConfig(&config);
+        PyConfig_Clear(&config);
+        if (PyStatus_Exception(status)) {
+            if (error) {
+                *error = [NSError errorWithDomain:@"PythonBridge" code:12 userInfo:@{NSLocalizedDescriptionKey: @"Py_InitializeFromConfig failed."}];
+            }
+            return NO;
+        }
+
+        PyRun_SimpleString("import sys\nsys.dont_write_bytecode = True\n");
+        PyGILState_STATE state = PyGILState_Ensure();
+        PyObject *module = PyImport_ImportModule("kernel_bridge");
+        if (!module) {
+            NSString *message = [self pythonErrorMessage];
+            if (error) {
+                *error = [NSError errorWithDomain:@"PythonBridge" code:13 userInfo:@{NSLocalizedDescriptionKey: message}];
+            }
+            PyGILState_Release(state);
+            return NO;
+        }
+        Py_DECREF(module);
         PyGILState_Release(state);
-        return NO;
-    }
-    Py_DECREF(module);
-    PyGILState_Release(state);
 
-    sInitialized = YES;
-    return YES;
+        // Release the startup thread's interpreter state so later bridge calls
+        // can safely reacquire the GIL from whichever executor thread runs them.
+        sInterpreterThreadState = PyEval_SaveThread();
+        sInitialized = YES;
+        return YES;
+    }
 }
 
 + (NSDictionary<NSString *,id> * _Nullable)executeCode:(NSString *)code
