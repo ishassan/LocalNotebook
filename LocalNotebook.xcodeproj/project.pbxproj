@@ -47,7 +47,9 @@
 		8D18B7EE2D09545013C469BA /* KernelModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145D7E30E8F15AFA92BB04D4 /* KernelModels.swift */; };
 		8D461AF61ECBB223D695EE96 /* MultilineTextValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591BAF0A2B9EF687DB25A253 /* MultilineTextValue.swift */; };
 		8E52B6BE1EF2030FE50F811A /* LocalPythonKernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EA7BA65A95DEBD9FB64B5B /* LocalPythonKernel.swift */; };
+		92F53B9ABD2F097573990BA4 /* MarkdownRenderingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8F393979C66D04B2978DB8 /* MarkdownRenderingTests.swift */; };
 		95B9B7D0494CD1E561653852 /* UITestKernelClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FBD3258F9C9A51E710001D /* UITestKernelClient.swift */; };
+		99E6537A2E0CA15F2448ECCA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E900D0045D2A7D175B9DC2E /* Assets.xcassets */; };
 		A459CFDB3CB9D4F1376398EF /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A09768D59E2D4F866BF4B2 /* Logger.swift */; };
 		B63091C115EC951353A3A194 /* UITestHarness.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB1A514E289240033BD7C72 /* UITestHarness.swift */; };
 		B68173AF9F88C5DAA9771130 /* MarkdownPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133AC95D825DA19766B4E39E /* MarkdownPreviewView.swift */; };
@@ -112,6 +114,7 @@
 		49FBD3258F9C9A51E710001D /* UITestKernelClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestKernelClient.swift; sourceTree = "<group>"; };
 		4ACDE4A140F43C4450C07853 /* LocalNotebook.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LocalNotebook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E701C8E7A6211F55568A53F /* DocumentEditorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentEditorStore.swift; sourceTree = "<group>"; };
+		4E900D0045D2A7D175B9DC2E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		57A09768D59E2D4F866BF4B2 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		591BAF0A2B9EF687DB25A253 /* MultilineTextValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextValue.swift; sourceTree = "<group>"; };
 		60AB5F27B5410B1CBFA1703C /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -148,6 +151,7 @@
 		E8DAC394CA615A59D3B74D4F /* AutosaveRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutosaveRecoveryTests.swift; sourceTree = "<group>"; };
 		E9CA6467A4B7121B2C561265 /* DocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentRepository.swift; sourceTree = "<group>"; };
 		EACAD32A075A1DFACE3E6B97 /* JSONValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValue.swift; sourceTree = "<group>"; };
+		EC8F393979C66D04B2978DB8 /* MarkdownRenderingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderingTests.swift; sourceTree = "<group>"; };
 		ECB1A514E289240033BD7C72 /* UITestHarness.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestHarness.swift; sourceTree = "<group>"; };
 		EDFBBEA0A809D1FB02E9FAF8 /* CodeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeTextView.swift; sourceTree = "<group>"; };
 		F2CA628B2B0730333EB5D0B2 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
@@ -223,6 +227,7 @@
 			children = (
 				B30C473067244DF426CEA3E1 /* PythonApp */,
 				E863FFFA4167CEB7ACAFC419 /* SampleNotebooks */,
+				4E900D0045D2A7D175B9DC2E /* Assets.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -377,6 +382,7 @@
 			children = (
 				E8DAC394CA615A59D3B74D4F /* AutosaveRecoveryTests.swift */,
 				9F5236A30C4091115D77BFA8 /* ExecutionSessionTests.swift */,
+				EC8F393979C66D04B2978DB8 /* MarkdownRenderingTests.swift */,
 				A1C3657AB82C712ADDA15FE3 /* NotebookCodecTests.swift */,
 				36B73F77F95313194BEDEABD /* NotebookEditingTests.swift */,
 			);
@@ -577,6 +583,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99E6537A2E0CA15F2448ECCA /* Assets.xcassets in Resources */,
 				098040D5E73D87CF1552136A /* MarkdownAndOutputs.ipynb in Resources */,
 				DB1E0D8ECFB8F092F6749B48 /* MatplotlibDemo.ipynb in Resources */,
 				5FDCE2A07CBE05BB89C8F981 /* UITestNotebook.ipynb in Resources */,
@@ -625,6 +632,7 @@
 			files = (
 				B72BA56B656A4D85100379EB /* AutosaveRecoveryTests.swift in Sources */,
 				5013D3A956CD34974075C898 /* ExecutionSessionTests.swift in Sources */,
+				92F53B9ABD2F097573990BA4 /* MarkdownRenderingTests.swift in Sources */,
 				E6CF65C24FF8CE3857E90499 /* NotebookCodecTests.swift in Sources */,
 				37F1BC7083A3DAF076906EED /* NotebookEditingTests.swift in Sources */,
 			);
