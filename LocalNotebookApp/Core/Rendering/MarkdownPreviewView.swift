@@ -1,5 +1,5 @@
 import SwiftUI
-import WebKit
+import UIKit
 
 struct MarkdownPreviewView: View {
     let markdown: String
@@ -13,119 +13,371 @@ struct MarkdownPreviewView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        AutoSizingHTMLView(
-            html: MarkdownHTMLRenderer.htmlDocument(
-                for: markdown,
-                colorScheme: colorScheme
-            ),
+        MarkdownTextView(
+            markdown: markdown,
+            colorScheme: colorScheme,
             onOpenAnchor: onOpenAnchor
         )
     }
 }
 
-private struct AutoSizingHTMLView: UIViewRepresentable {
-    let html: String
+private struct MarkdownTextView: UIViewRepresentable {
+    let markdown: String
+    let colorScheme: ColorScheme
     let onOpenAnchor: ((String) -> Void)?
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
     }
 
-    func makeUIView(context: Context) -> WKWebView {
-        let configuration = WKWebViewConfiguration()
-        configuration.defaultWebpagePreferences.allowsContentJavaScript = true
-        configuration.userContentController.add(context.coordinator, name: "anchorClick")
-        configuration.userContentController.addUserScript(
-            WKUserScript(
-                source: """
-                document.addEventListener('click', function(event) {
-                  const anchor = event.target.closest('a');
-                  if (!anchor) return;
-                  const href = anchor.getAttribute('href') || '';
-                  if (!href.startsWith('#')) return;
-                  event.preventDefault();
-                  const fragment = href.slice(1);
-                  window.webkit.messageHandlers.anchorClick.postMessage(fragment);
-                });
-                """,
-                injectionTime: .atDocumentEnd,
-                forMainFrameOnly: true
-            )
-        )
-
-        let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.isOpaque = false
-        webView.backgroundColor = .clear
-        webView.scrollView.isScrollEnabled = false
-        webView.scrollView.backgroundColor = .clear
-        webView.navigationDelegate = context.coordinator
-        context.coordinator.webView = webView
-        return webView
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.backgroundColor = .clear
+        textView.isEditable = false
+        textView.isSelectable = true
+        textView.isScrollEnabled = false
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.adjustsFontForContentSizeCategory = true
+        textView.delegate = context.coordinator
+        textView.dataDetectorTypes = []
+        return textView
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {
+    func updateUIView(_ uiView: UITextView, context: Context) {
         context.coordinator.onOpenAnchor = onOpenAnchor
-        guard context.coordinator.lastHTML != html else { return }
-        context.coordinator.lastHTML = html
-        uiView.loadHTMLString(html, baseURL: nil)
-    }
-
-    func sizeThatFits(_ proposal: ProposedViewSize, uiView: WKWebView, context: Context) -> CGSize? {
-        CGSize(
-            width: proposal.width ?? uiView.scrollView.contentSize.width,
-            height: max(1, context.coordinator.contentHeight)
+        let attributed = MarkdownAttributedStringCache.shared.attributedString(
+            markdown: markdown,
+            colorScheme: colorScheme
         )
+        if uiView.attributedText != attributed {
+            uiView.attributedText = attributed
+        }
+        uiView.linkTextAttributes = [
+            .foregroundColor: UIColor(
+                red: colorScheme == .dark ? 0.51 : 0.04,
+                green: colorScheme == .dark ? 0.81 : 0.42,
+                blue: colorScheme == .dark ? 1.0 : 0.68,
+                alpha: 1
+            ),
+            .underlineStyle: NSUnderlineStyle.single.rawValue
+        ]
     }
 
-    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
-        weak var webView: WKWebView?
-        var lastHTML = ""
-        var contentHeight: CGFloat = 1
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UITextView, context: Context) -> CGSize? {
+        let width = proposal.width ?? uiView.bounds.width
+        guard width > 0 else { return nil }
+        let size = uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
+        return CGSize(width: width, height: ceil(size.height))
+    }
+
+    final class Coordinator: NSObject, UITextViewDelegate {
         var onOpenAnchor: ((String) -> Void)?
 
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            webView.evaluateJavaScript("document.documentElement.scrollHeight") { [weak self] value, _ in
-                guard let self else { return }
-                let measuredHeight = (value as? NSNumber).map(CGFloat.init(truncating:)) ?? 1
-                contentHeight = max(1, ceil(measuredHeight))
-                webView.invalidateIntrinsicContentSize()
-            }
-        }
-
-        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-            guard message.name == "anchorClick",
-                  let fragment = message.body as? String,
-                  !fragment.isEmpty else { return }
-            onOpenAnchor?(fragment)
-        }
-
-        @MainActor
-        func webView(
-            _ webView: WKWebView,
-            decidePolicyFor navigationAction: WKNavigationAction,
-            decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void
-        ) {
-            guard navigationAction.navigationType == .linkActivated,
-                  let url = navigationAction.request.url else {
-                decisionHandler(.allow)
-                return
+        func textView(
+            _ textView: UITextView,
+            shouldInteractWith url: URL,
+            in characterRange: NSRange,
+            interaction: UITextItemInteraction
+        ) -> Bool {
+            if url.scheme == "localnotebook",
+               url.host == "anchor" {
+                let fragment = url.lastPathComponent.removingPercentEncoding ?? url.lastPathComponent
+                if !fragment.isEmpty {
+                    onOpenAnchor?(fragment)
+                    return false
+                }
             }
 
             if let fragment = url.fragment, !fragment.isEmpty {
                 onOpenAnchor?(fragment)
-                decisionHandler(.cancel)
-                return
+                return false
             }
 
-            if url.scheme != "about" {
-                Task { @MainActor in
-                    UIApplication.shared.open(url)
+            if url.absoluteString.hasPrefix("#") {
+                let fragment = String(url.absoluteString.dropFirst())
+                if !fragment.isEmpty {
+                    onOpenAnchor?(fragment)
+                    return false
                 }
-                decisionHandler(.cancel)
-                return
             }
 
-            decisionHandler(.allow)
+            UIApplication.shared.open(url)
+            return false
+        }
+    }
+}
+
+@MainActor
+private final class MarkdownAttributedStringCache {
+    static let shared = MarkdownAttributedStringCache()
+
+    private let cache = NSCache<NSString, NSAttributedString>()
+
+    func attributedString(markdown: String, colorScheme: ColorScheme) -> NSAttributedString {
+        let key = "\(colorScheme == .dark ? "dark" : "light")::\(markdown)" as NSString
+        if let cached = cache.object(forKey: key) {
+            return cached
+        }
+
+        let attributed = render(markdown: markdown, colorScheme: colorScheme)
+        cache.setObject(attributed, forKey: key)
+        return attributed
+    }
+
+    private func render(markdown: String, colorScheme: ColorScheme) -> NSAttributedString {
+        MarkdownAttributedStringRenderer.attributedString(markdown: markdown, colorScheme: colorScheme)
+    }
+}
+
+private enum MarkdownAttributedStringRenderer {
+    static func attributedString(markdown: String, colorScheme: ColorScheme) -> NSAttributedString {
+        let prepared = MarkdownHTMLRenderer.prepare(markdown)
+        let lines = prepared.sanitizedMarkdown
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "\r", with: "\n")
+            .components(separatedBy: "\n")
+
+        let result = NSMutableAttributedString()
+        var paragraphLines: [String] = []
+        var codeFenceLanguage: String?
+        var codeFenceLines: [String] = []
+
+        func appendBlock(_ block: NSAttributedString) {
+            if result.length > 0 {
+                result.append(NSAttributedString(string: "\n"))
+            }
+            result.append(block)
+        }
+
+        func flushParagraph() {
+            guard !paragraphLines.isEmpty else { return }
+            let paragraphText = paragraphLines.joined(separator: "\n")
+            appendBlock(
+                inlineAttributedString(
+                    for: paragraphText,
+                    attributes: paragraphAttributes(colorScheme: colorScheme)
+                )
+            )
+            paragraphLines.removeAll(keepingCapacity: true)
+        }
+
+        for line in lines {
+            if codeFenceLanguage != nil {
+                if line.trimmingCharacters(in: .whitespaces).hasPrefix("```") {
+                    appendBlock(codeBlock(codeFenceLines.joined(separator: "\n"), colorScheme: colorScheme))
+                    codeFenceLanguage = nil
+                    codeFenceLines.removeAll(keepingCapacity: true)
+                } else {
+                    codeFenceLines.append(line)
+                }
+                continue
+            }
+
+            if let fence = MarkdownHTMLRenderer.parseCodeFence(line) {
+                flushParagraph()
+                codeFenceLanguage = fence
+                codeFenceLines.removeAll(keepingCapacity: true)
+                continue
+            }
+
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.isEmpty {
+                flushParagraph()
+                continue
+            }
+
+            if let heading = MarkdownHTMLRenderer.parseHeading(line) {
+                flushParagraph()
+                appendBlock(headingBlock(heading.text, level: heading.level, colorScheme: colorScheme))
+                continue
+            }
+
+            if let quote = MarkdownHTMLRenderer.parseBlockquote(line) {
+                flushParagraph()
+                appendBlock(blockquoteBlock(quote, colorScheme: colorScheme))
+                continue
+            }
+
+            if let listItem = MarkdownHTMLRenderer.parseListItem(line) {
+                flushParagraph()
+                appendBlock(listBlock(listItem, colorScheme: colorScheme))
+                continue
+            }
+
+            if trimmed == "---" || trimmed == "***" {
+                flushParagraph()
+                appendBlock(horizontalRule(colorScheme: colorScheme))
+                continue
+            }
+
+            paragraphLines.append(trimmed)
+        }
+
+        if codeFenceLanguage != nil {
+            appendBlock(codeBlock(codeFenceLines.joined(separator: "\n"), colorScheme: colorScheme))
+        }
+
+        flushParagraph()
+        return result
+    }
+
+    private static func headingBlock(_ text: String, level: Int, colorScheme: ColorScheme) -> NSAttributedString {
+        let sizes: [CGFloat] = [30, 26, 22, 20, 18, 17]
+        let font = UIFont.systemFont(ofSize: sizes[max(0, min(level - 1, sizes.count - 1))], weight: .bold)
+        return inlineAttributedString(
+            for: text,
+            attributes: blockAttributes(
+                font: font,
+                color: colorScheme == .dark ? .white : .label,
+                paragraphSpacing: 10
+            )
+        )
+    }
+
+    private static func blockquoteBlock(_ text: String, colorScheme: ColorScheme) -> NSAttributedString {
+        let attrs = blockAttributes(
+            font: .italicSystemFont(ofSize: 16),
+            color: colorScheme == .dark ? UIColor(red: 0.78, green: 0.81, blue: 0.86, alpha: 1) : .secondaryLabel,
+            paragraphSpacing: 8,
+            firstLineHeadIndent: 12,
+            headIndent: 12
+        )
+        return inlineAttributedString(for: text, attributes: attrs)
+    }
+
+    private static func listBlock(
+        _ item: (depth: Int, type: String, text: String),
+        colorScheme: ColorScheme
+    ) -> NSAttributedString {
+        let indent = CGFloat(item.depth) * 18
+        let prefix = item.type == "ol" ? "1. " : "• "
+        let attrs = blockAttributes(
+            font: .systemFont(ofSize: 16),
+            color: colorScheme == .dark ? .white : .label,
+            paragraphSpacing: 4,
+            firstLineHeadIndent: indent,
+            headIndent: indent + 20
+        )
+        let result = NSMutableAttributedString(
+            string: String(repeating: "\u{00a0}", count: item.depth * 2) + prefix,
+            attributes: attrs
+        )
+        result.append(inlineAttributedString(for: item.text, attributes: attrs))
+        return result
+    }
+
+    private static func codeBlock(_ text: String, colorScheme: ColorScheme) -> NSAttributedString {
+        let attrs = blockAttributes(
+            font: .monospacedSystemFont(ofSize: 14, weight: .regular),
+            color: colorScheme == .dark ? .white : .label,
+            paragraphSpacing: 8
+        ).merging([
+            .backgroundColor: colorScheme == .dark ? UIColor.white.withAlphaComponent(0.08) : UIColor.black.withAlphaComponent(0.06)
+        ]) { _, new in new }
+        return NSAttributedString(string: text, attributes: attrs)
+    }
+
+    private static func horizontalRule(colorScheme: ColorScheme) -> NSAttributedString {
+        NSAttributedString(
+            string: "──────────",
+            attributes: blockAttributes(
+                font: .systemFont(ofSize: 12),
+                color: colorScheme == .dark ? UIColor.white.withAlphaComponent(0.35) : UIColor.black.withAlphaComponent(0.25),
+                paragraphSpacing: 8
+            )
+        )
+    }
+
+    private static func paragraphAttributes(colorScheme: ColorScheme) -> [NSAttributedString.Key: Any] {
+        blockAttributes(
+            font: .systemFont(ofSize: 16),
+            color: colorScheme == .dark ? .white : .label,
+            paragraphSpacing: 8
+        )
+    }
+
+    private static func blockAttributes(
+        font: UIFont,
+        color: UIColor,
+        paragraphSpacing: CGFloat,
+        firstLineHeadIndent: CGFloat = 0,
+        headIndent: CGFloat = 0
+    ) -> [NSAttributedString.Key: Any] {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = 3
+        paragraphStyle.paragraphSpacing = paragraphSpacing
+        paragraphStyle.firstLineHeadIndent = firstLineHeadIndent
+        paragraphStyle.headIndent = headIndent
+        return [
+            .font: font,
+            .foregroundColor: color,
+            .paragraphStyle: paragraphStyle
+        ]
+    }
+
+    private static func inlineAttributedString(
+        for text: String,
+        attributes: [NSAttributedString.Key: Any]
+    ) -> NSAttributedString {
+        let result = NSMutableAttributedString(string: text, attributes: attributes)
+
+        applyInline(pattern: "`([^`]+)`", to: result, baseAttributes: attributes) { match in
+            var codeAttributes = attributes
+            codeAttributes[.font] = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
+            codeAttributes[.backgroundColor] = UIColor.black.withAlphaComponent(0.06)
+            return NSAttributedString(string: match[1], attributes: codeAttributes)
+        }
+
+        applyInline(pattern: "\\[([^\\]]+)\\]\\(([^)]+)\\)", to: result, baseAttributes: attributes) { match in
+            var linkAttributes = attributes
+            let destination = match[2]
+            if destination.hasPrefix("#"),
+               let encoded = String(destination.dropFirst()).addingPercentEncoding(withAllowedCharacters: .urlPathAllowed),
+               let url = URL(string: "localnotebook://anchor/\(encoded)") {
+                linkAttributes[.link] = url
+            } else if let url = URL(string: destination) {
+                linkAttributes[.link] = url
+            }
+            return NSAttributedString(string: match[1], attributes: linkAttributes)
+        }
+
+        applyInline(pattern: "\\*\\*([^*]+)\\*\\*", to: result, baseAttributes: attributes) { match in
+            var boldAttributes = attributes
+            let baseFont = (attributes[.font] as? UIFont) ?? .systemFont(ofSize: 16)
+            boldAttributes[.font] = UIFont.systemFont(ofSize: baseFont.pointSize, weight: .bold)
+            return NSAttributedString(string: match[1], attributes: boldAttributes)
+        }
+
+        applyInline(pattern: "(?<!\\*)\\*([^*]+)\\*(?!\\*)", to: result, baseAttributes: attributes) { match in
+            var italicAttributes = attributes
+            let baseFont = (attributes[.font] as? UIFont) ?? .systemFont(ofSize: 16)
+            italicAttributes[.font] = UIFont.italicSystemFont(ofSize: baseFont.pointSize)
+            return NSAttributedString(string: match[1], attributes: italicAttributes)
+        }
+
+        return result
+    }
+
+    private static func applyInline(
+        pattern: String,
+        to attributedString: NSMutableAttributedString,
+        baseAttributes: [NSAttributedString.Key: Any],
+        replacement: ([String]) -> NSAttributedString
+    ) {
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return }
+        let source = attributedString.string
+        let matches = regex.matches(in: source, range: NSRange(source.startIndex..., in: source))
+        for match in matches.reversed() {
+            var groups: [String] = []
+            for index in 0..<match.numberOfRanges {
+                if let range = Range(match.range(at: index), in: source) {
+                    groups.append(String(source[range]))
+                } else {
+                    groups.append("")
+                }
+            }
+            attributedString.replaceCharacters(in: match.range, with: replacement(groups))
         }
     }
 }
@@ -160,7 +412,8 @@ enum MarkdownHTMLRenderer {
             }
             body {
               color: var(--text);
-              font: -apple-system-body;
+              font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+              font-size: 16px;
               line-height: 1.55;
               overflow-wrap: break-word;
             }
@@ -246,8 +499,7 @@ enum MarkdownHTMLRenderer {
             return PreparedMarkdown(sanitizedMarkdown: markdown, anchorIDs: [])
         }
 
-        let source = markdown as NSString
-        let matches = regex.matches(in: markdown, range: NSRange(location: 0, length: source.length))
+        let matches = regex.matches(in: markdown, range: NSRange(markdown.startIndex..., in: markdown))
         guard !matches.isEmpty else {
             return PreparedMarkdown(sanitizedMarkdown: markdown, anchorIDs: [])
         }
@@ -384,7 +636,7 @@ enum MarkdownHTMLRenderer {
         return html.joined()
     }
 
-    private static func parseHeading(_ line: String) -> (level: Int, text: String)? {
+    static func parseHeading(_ line: String) -> (level: Int, text: String)? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         let hashes = trimmed.prefix { $0 == "#" }
         guard !hashes.isEmpty, hashes.count <= 6 else { return nil }
@@ -393,19 +645,19 @@ enum MarkdownHTMLRenderer {
         return (hashes.count, content.trimmingCharacters(in: .whitespaces))
     }
 
-    private static func parseCodeFence(_ line: String) -> String? {
+    static func parseCodeFence(_ line: String) -> String? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         guard trimmed.hasPrefix("```") else { return nil }
         return String(trimmed.dropFirst(3)).trimmingCharacters(in: .whitespaces)
     }
 
-    private static func parseBlockquote(_ line: String) -> String? {
+    static func parseBlockquote(_ line: String) -> String? {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         guard trimmed.hasPrefix(">") else { return nil }
         return String(trimmed.dropFirst().trimmingCharacters(in: .whitespaces))
     }
 
-    private static func parseListItem(_ line: String) -> (depth: Int, type: String, text: String)? {
+    static func parseListItem(_ line: String) -> (depth: Int, type: String, text: String)? {
         let leadingSpaces = line.prefix { $0 == " " }.count
         let trimmed = line.trimmingCharacters(in: .whitespaces)
 
