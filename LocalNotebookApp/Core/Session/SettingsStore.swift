@@ -63,7 +63,7 @@ final class SettingsStore {
             clearOutputsOnDuplicate = persisted.clearOutputsOnDuplicate
             clearOutputsOnExport = persisted.clearOutputsOnExport
         } else {
-            theme = .system
+            theme = .dark
             codeFontSize = 15
             notebookTextSize = 16
             autosaveEnabled = true

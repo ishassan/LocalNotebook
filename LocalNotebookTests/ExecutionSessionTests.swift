@@ -49,6 +49,30 @@ final class ExecutionSessionTests: XCTestCase {
         XCTAssertTrue(renderedIDs.contains("m1"))
     }
 
+    func testLoadRendersMarkdownCellsWithoutExecutingCode() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let repository = DocumentRepository(rootURL: root)
+        let snapshot = try await repository.createNotebook(named: "Open Notebook")
+
+        let notebook = NotebookDocument(
+            cells: [
+                NotebookCell(id: "m1", cellType: .markdown, source: .string("# Title")),
+                NotebookCell(id: "c1", cellType: .code, source: .string("print('do not run')"))
+            ]
+        )
+        try await repository.saveNotebook(notebook, for: snapshot.id)
+
+        let appSession = await MainActor.run { AppSessionStore(repository: repository) }
+        let kernel = MockKernelClient(sessionID: snapshot.id)
+        let store = await MainActor.run { DocumentEditorStore(documentID: snapshot.id, appSession: appSession, kernel: kernel) }
+        await store.load()
+
+        let renderedIDs = await MainActor.run { store.renderedMarkdownCellIDs }
+        let executionCount = await kernel.executionCount()
+        XCTAssertTrue(renderedIDs.contains("m1"))
+        XCTAssertEqual(executionCount, 0)
+    }
+
     func testImportDocumentCanSelectFilesTabAndOpenImportedNotebook() async throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
         let repository = DocumentRepository(rootURL: root)
@@ -74,6 +98,41 @@ final class ExecutionSessionTests: XCTestCase {
 
         XCTAssertEqual(selectedTab, 0)
         XCTAssertEqual(path, [snapshot?.id].compactMap { $0 })
+    }
+
+    func testChangingCellTypeToMarkdownClearsOutputsAndRendersPreview() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let repository = DocumentRepository(rootURL: root)
+        let snapshot = try await repository.createNotebook(named: "Retype")
+
+        let notebook = NotebookDocument(
+            cells: [
+                NotebookCell(
+                    id: "c1",
+                    cellType: .code,
+                    source: .string("# title"),
+                    executionCount: 1,
+                    outputs: [NotebookOutput(outputType: "display_data", data: ["text/plain": .string("old")])]
+                )
+            ]
+        )
+        try await repository.saveNotebook(notebook, for: snapshot.id)
+
+        let appSession = await MainActor.run { AppSessionStore(repository: repository) }
+        let kernel = MockKernelClient(sessionID: snapshot.id)
+        let store = await MainActor.run { DocumentEditorStore(documentID: snapshot.id, appSession: appSession, kernel: kernel) }
+        await store.load()
+        await MainActor.run {
+            store.setCellType(.markdown, cellID: "c1")
+        }
+
+        let cell = await MainActor.run { store.notebook?.cells.first }
+        let renderedIDs = await MainActor.run { store.renderedMarkdownCellIDs }
+
+        XCTAssertEqual(cell?.cellType, .markdown)
+        XCTAssertNil(cell?.executionCount)
+        XCTAssertEqual(cell?.outputs, [])
+        XCTAssertTrue(renderedIDs.contains("c1"))
     }
 }
 
@@ -116,4 +175,8 @@ private actor MockKernelClient: KernelClient {
     }
 
     func interrupt() async {}
+
+    func executionCount() -> Int {
+        count
+    }
 }

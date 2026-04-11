@@ -3,6 +3,7 @@ import SwiftUI
 struct ScriptEditorView: View {
     @Bindable var store: DocumentEditorStore
     @Environment(AppSessionStore.self) private var appSession
+    @Environment(\.colorScheme) private var colorScheme
     @State private var exportDocument: ExportFileDocument?
     @State private var exportShown = false
 
@@ -22,12 +23,12 @@ struct ScriptEditorView: View {
                     .accessibilityIdentifier("run-script")
                 }
                 .padding(16)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                .background(NotebookTheme.panelFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 16))
 
                 CodeTextView(text: Binding(get: { store.textContent }, set: { store.updateText($0) }), fontSize: appSession.settings.codeFontSize)
                     .frame(minHeight: 260)
                     .padding(12)
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
+                    .background(NotebookTheme.panelFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 18))
 
                 if let outputCell = store.notebook?.cells.first, !outputCell.outputs.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
@@ -36,12 +37,12 @@ struct ScriptEditorView: View {
                         }
                     }
                     .padding(16)
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
+                    .background(NotebookTheme.panelFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 18))
                 }
             }
             .padding()
         }
-        .background(NotebookTheme.warmBackground.ignoresSafeArea())
+        .background(NotebookTheme.background(for: colorScheme).ignoresSafeArea())
         .navigationTitle(store.title)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {

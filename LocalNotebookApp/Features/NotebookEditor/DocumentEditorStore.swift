@@ -63,8 +63,14 @@ final class DocumentEditorStore {
             switch opened.content {
             case .notebook(let notebook):
                 self.notebook = notebook
+                renderedMarkdownCellIDs = Set(
+                    notebook.cells
+                        .filter { $0.cellType == .markdown }
+                        .map(\.id)
+                )
             case .text(let text):
                 self.textContent = text
+                renderedMarkdownCellIDs = []
             }
             updateRunningSession()
         } catch {
@@ -155,9 +161,18 @@ final class DocumentEditorStore {
         scheduleAutosave()
     }
 
-    func setMarkdownCellType(_ type: NotebookCellType, cellID: String) {
+    func setCellType(_ type: NotebookCellType, cellID: String) {
         guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }) else { return }
+        if notebook?.cells[index].cellType == .code && type != .code {
+            notebook?.cells[index].outputs = []
+            notebook?.cells[index].executionCount = nil
+        }
         notebook?.cells[index].cellType = type
+        if type == .markdown {
+            renderedMarkdownCellIDs.insert(cellID)
+        } else {
+            renderedMarkdownCellIDs.remove(cellID)
+        }
         scheduleAutosave()
     }
 
@@ -168,10 +183,31 @@ final class DocumentEditorStore {
         scheduleAutosave()
     }
 
+    func insertCell(type: NotebookCellType, before cellID: String) {
+        guard var notebook,
+              let index = notebook.cells.firstIndex(where: { $0.id == cellID }) else { return }
+        NotebookEditingReducer.insertCell(&notebook, type: type, at: index)
+        self.notebook = notebook
+        scheduleAutosave()
+    }
+
+    func insertCell(type: NotebookCellType, after cellID: String) {
+        guard var notebook,
+              let index = notebook.cells.firstIndex(where: { $0.id == cellID }) else { return }
+        NotebookEditingReducer.insertCell(&notebook, type: type, at: index + 1)
+        self.notebook = notebook
+        scheduleAutosave()
+    }
+
+    func appendCell(type: NotebookCellType) {
+        addCell(type: type, after: notebook?.cells.indices.last)
+    }
+
     func deleteCell(_ cellID: String) {
         guard var notebook else { return }
         NotebookEditingReducer.deleteCell(&notebook, id: cellID)
         self.notebook = notebook
+        renderedMarkdownCellIDs.remove(cellID)
         scheduleAutosave()
     }
 

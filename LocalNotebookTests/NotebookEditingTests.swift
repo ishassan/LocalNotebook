@@ -33,4 +33,22 @@ final class NotebookEditingTests: XCTestCase {
         XCTAssertEqual(notebook.cells.count, 2)
         XCTAssertNotEqual(notebook.cells[0].id, notebook.cells[1].id)
     }
+
+    func testInsertCellCanPlaceCellsBeforeAndAfterExistingCell() {
+        var notebook = NotebookDocument(
+            cells: [
+                NotebookCell(id: "first", cellType: .markdown, source: .string("A")),
+                NotebookCell(id: "second", cellType: .code, source: .string("B"))
+            ]
+        )
+
+        NotebookEditingReducer.insertCell(&notebook, type: .code, at: 0)
+        NotebookEditingReducer.insertCell(&notebook, type: .markdown, at: 2)
+
+        XCTAssertEqual(notebook.cells.count, 4)
+        XCTAssertEqual(notebook.cells[0].cellType, .code)
+        XCTAssertEqual(notebook.cells[1].id, "first")
+        XCTAssertEqual(notebook.cells[2].cellType, .markdown)
+        XCTAssertEqual(notebook.cells[3].id, "second")
+    }
 }

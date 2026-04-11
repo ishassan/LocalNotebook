@@ -2,12 +2,17 @@ import Foundation
 
 enum NotebookEditingReducer {
     static func addCell(_ notebook: inout NotebookDocument, type: NotebookCellType, after index: Int?) {
-        let cell = NotebookCell(cellType: type)
         if let index {
-            notebook.cells.insert(cell, at: min(index + 1, notebook.cells.count))
+            insertCell(&notebook, type: type, at: index + 1)
         } else {
-            notebook.cells.append(cell)
+            insertCell(&notebook, type: type, at: notebook.cells.count)
         }
+    }
+
+    static func insertCell(_ notebook: inout NotebookDocument, type: NotebookCellType, at index: Int) {
+        let cell = NotebookCell(cellType: type)
+        let safeIndex = max(0, min(index, notebook.cells.count))
+        notebook.cells.insert(cell, at: safeIndex)
     }
 
     static func deleteCell(_ notebook: inout NotebookDocument, id: String) {

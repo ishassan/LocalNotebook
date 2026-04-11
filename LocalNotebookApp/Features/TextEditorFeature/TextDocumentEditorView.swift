@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TextDocumentEditorView: View {
     @Bindable var store: DocumentEditorStore
+    @Environment(\.colorScheme) private var colorScheme
     @State private var exportDocument: ExportFileDocument?
     @State private var exportShown = false
 
@@ -10,10 +11,10 @@ struct TextDocumentEditorView: View {
             TextEditor(text: Binding(get: { store.textContent }, set: { store.updateText($0) }))
                 .font(.body)
                 .padding(12)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 18))
+                .background(NotebookTheme.panelFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 18))
         }
         .padding()
-        .background(NotebookTheme.warmBackground.ignoresSafeArea())
+        .background(NotebookTheme.background(for: colorScheme).ignoresSafeArea())
         .navigationTitle(store.title)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
