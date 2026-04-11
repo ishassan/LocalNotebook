@@ -60,12 +60,12 @@ private struct MarkdownTextView: UIViewRepresentable {
         }
         uiView.linkTextAttributes = [
             .foregroundColor: UIColor(
-                red: colorScheme == .dark ? 0.51 : 0.04,
-                green: colorScheme == .dark ? 0.81 : 0.42,
-                blue: colorScheme == .dark ? 1.0 : 0.68,
+                red: colorScheme == .dark ? 0.18 : 0.04,
+                green: colorScheme == .dark ? 0.56 : 0.42,
+                blue: colorScheme == .dark ? 0.98 : 0.68,
                 alpha: 1
             ),
-            .underlineStyle: NSUnderlineStyle.single.rawValue
+            .underlineStyle: 0
         ]
     }
 
@@ -233,10 +233,10 @@ private enum MarkdownAttributedStringRenderer {
 
     private static func headingBlock(_ text: String, level: Int, baseFontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
         let sizes: [CGFloat] = [
-            baseFontSize * 1.875,
-            baseFontSize * 1.625,
-            baseFontSize * 1.375,
-            baseFontSize * 1.25,
+            baseFontSize * 1.95,
+            baseFontSize * 1.65,
+            baseFontSize * 1.4,
+            baseFontSize * 1.22,
             baseFontSize * 1.125,
             baseFontSize * 1.05
         ]
@@ -267,19 +267,29 @@ private enum MarkdownAttributedStringRenderer {
         baseFontSize: CGFloat,
         colorScheme: ColorScheme
     ) -> NSAttributedString {
-        let indent = CGFloat(item.depth) * (baseFontSize + 2)
-        let prefix = item.type == "ol" ? "1. " : "• "
+        let indentStep = baseFontSize + 4
+        let indent = CGFloat(item.depth) * indentStep
         let attrs = blockAttributes(
             font: .systemFont(ofSize: baseFontSize),
             color: colorScheme == .dark ? .white : .label,
             paragraphSpacing: 4,
             firstLineHeadIndent: indent,
-            headIndent: indent + baseFontSize + 4
+            headIndent: indent + indentStep
         )
-        let result = NSMutableAttributedString(
-            string: String(repeating: "\u{00a0}", count: item.depth * 2) + prefix,
-            attributes: attrs
-        )
+
+        let result = NSMutableAttributedString()
+        if item.type == "ol" {
+            result.append(NSAttributedString(string: "1. ", attributes: attrs))
+        } else {
+            result.append(
+                bulletPrefix(
+                    depth: item.depth,
+                    baseFontSize: baseFontSize,
+                    colorScheme: colorScheme,
+                    attributes: attrs
+                )
+            )
+        }
         result.append(inlineAttributedString(for: item.text, attributes: attrs))
         return result
     }
@@ -290,7 +300,7 @@ private enum MarkdownAttributedStringRenderer {
             color: colorScheme == .dark ? .white : .label,
             paragraphSpacing: 8
         ).merging([
-            .backgroundColor: colorScheme == .dark ? UIColor.white.withAlphaComponent(0.08) : UIColor.black.withAlphaComponent(0.06)
+            .backgroundColor: colorScheme == .dark ? UIColor.white.withAlphaComponent(0.12) : UIColor.black.withAlphaComponent(0.06)
         ]) { _, new in new }
         return NSAttributedString(string: text, attributes: attrs)
     }
@@ -343,7 +353,9 @@ private enum MarkdownAttributedStringRenderer {
             var codeAttributes = attributes
             let baseFont = (attributes[.font] as? UIFont) ?? .systemFont(ofSize: 16)
             codeAttributes[.font] = UIFont.monospacedSystemFont(ofSize: max(12, baseFont.pointSize - 2), weight: .regular)
-            codeAttributes[.backgroundColor] = UIColor.black.withAlphaComponent(0.06)
+            codeAttributes[.backgroundColor] = (attributes[.foregroundColor] as? UIColor) == .white
+                ? UIColor.white.withAlphaComponent(0.12)
+                : UIColor.black.withAlphaComponent(0.06)
             return NSAttributedString(string: match[1], attributes: codeAttributes)
         }
 
@@ -396,6 +408,60 @@ private enum MarkdownAttributedStringRenderer {
                 }
             }
             attributedString.replaceCharacters(in: match.range, with: replacement(groups))
+        }
+    }
+
+    private static func bulletPrefix(
+        depth: Int,
+        baseFontSize: CGFloat,
+        colorScheme: ColorScheme,
+        attributes: [NSAttributedString.Key: Any]
+    ) -> NSAttributedString {
+        let color = colorScheme == .dark ? UIColor.white : UIColor.label
+        let bulletSize = max(9, baseFontSize * 0.42)
+        let attachment = NSTextAttachment()
+        attachment.image = bulletImage(depth: depth, size: bulletSize, color: color)
+        attachment.bounds = CGRect(x: 0, y: (baseFontSize - bulletSize) * -0.12, width: bulletSize, height: bulletSize)
+
+        let result = NSMutableAttributedString()
+        if depth > 0 {
+            result.append(
+                NSAttributedString(
+                    string: String(repeating: "\u{00A0}", count: depth * 2),
+                    attributes: attributes
+                )
+            )
+        }
+
+        let attachmentString = NSMutableAttributedString(attachment: attachment)
+        attachmentString.addAttributes(attributes, range: NSRange(location: 0, length: attachmentString.length))
+        result.append(attachmentString)
+        result.append(NSAttributedString(string: "  ", attributes: attributes))
+        return result
+    }
+
+    private static func bulletImage(depth: Int, size: CGFloat, color: UIColor) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: size, height: size))
+        return renderer.image { context in
+            let inset = max(1, size * 0.16)
+            let rect = CGRect(x: inset, y: inset, width: size - inset * 2, height: size - inset * 2)
+            let path: UIBezierPath
+
+            switch depth {
+            case 0:
+                path = UIBezierPath(ovalIn: rect)
+                color.setFill()
+                path.fill()
+            case 1:
+                path = UIBezierPath(rect: rect)
+                color.setFill()
+                path.fill()
+            default:
+                path = UIBezierPath(ovalIn: rect)
+                path.lineWidth = max(1.4, size * 0.12)
+                color.setStroke()
+                path.stroke()
+            }
         }
     }
 }

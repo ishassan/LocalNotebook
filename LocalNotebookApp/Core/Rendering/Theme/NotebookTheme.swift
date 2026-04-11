@@ -2,16 +2,16 @@ import SwiftUI
 
 enum NotebookTheme {
     static let cardCornerRadius: CGFloat = 18
-    static let accent = Color(red: 0.06, green: 0.42, blue: 0.73)
+    static let accent = Color(red: 0.18, green: 0.56, blue: 0.98)
 
     static func background(for colorScheme: ColorScheme) -> LinearGradient {
         switch colorScheme {
         case .dark:
             LinearGradient(
                 colors: [
-                    Color(red: 0.08, green: 0.09, blue: 0.13),
-                    Color(red: 0.11, green: 0.15, blue: 0.22),
-                    Color(red: 0.06, green: 0.09, blue: 0.14)
+                    Color(red: 0.01, green: 0.01, blue: 0.02),
+                    Color(red: 0.03, green: 0.04, blue: 0.06),
+                    Color(red: 0.01, green: 0.01, blue: 0.02)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
@@ -28,7 +28,7 @@ enum NotebookTheme {
     static func panelFill(for colorScheme: ColorScheme) -> Color {
         switch colorScheme {
         case .dark:
-            Color.white.opacity(0.08)
+            Color.white.opacity(0.04)
         default:
             Color.white.opacity(0.7)
         }
