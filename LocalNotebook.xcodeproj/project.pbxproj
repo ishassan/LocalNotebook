@@ -98,10 +98,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		024A15346F63E126DEF5F823 /* UITestNotebook.ipynb */ = {isa = PBXFileReference; path = UITestNotebook.ipynb; sourceTree = "<group>"; };
+		024A15346F63E126DEF5F823 /* UITestNotebook.ipynb */ = {isa = PBXFileReference; lastKnownFileType = text; path = UITestNotebook.ipynb; sourceTree = "<group>"; };
 		133AC95D825DA19766B4E39E /* MarkdownPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPreviewView.swift; sourceTree = "<group>"; };
 		13C1C0F5A0583BB9FB011456 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
-		13FE02190B70ECEC82F3BA2C /* MatplotlibDemo.ipynb */ = {isa = PBXFileReference; path = MatplotlibDemo.ipynb; sourceTree = "<group>"; };
+		13FE02190B70ECEC82F3BA2C /* MatplotlibDemo.ipynb */ = {isa = PBXFileReference; lastKnownFileType = text; path = MatplotlibDemo.ipynb; sourceTree = "<group>"; };
 		145D7E30E8F15AFA92BB04D4 /* KernelModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernelModels.swift; sourceTree = "<group>"; };
 		185EC4568731AC2C01BCCA9E /* RecentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsView.swift; sourceTree = "<group>"; };
 		243EB638BEED68FEA10E8985 /* kernel_bridge.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = kernel_bridge.py; sourceTree = "<group>"; };
@@ -112,7 +112,7 @@
 		3C6B1D50F886288FF607C68B /* DocumentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentModels.swift; sourceTree = "<group>"; };
 		41F323F7D230F94FEED7A709 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		49FBD3258F9C9A51E710001D /* UITestKernelClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestKernelClient.swift; sourceTree = "<group>"; };
-		4ACDE4A140F43C4450C07853 /* LocalNotebook.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LocalNotebook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4ACDE4A140F43C4450C07853 /* LocalNotebook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocalNotebook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E701C8E7A6211F55568A53F /* DocumentEditorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentEditorStore.swift; sourceTree = "<group>"; };
 		4E900D0045D2A7D175B9DC2E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		57A09768D59E2D4F866BF4B2 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -122,13 +122,13 @@
 		64CAAD225987160E6989D52A /* PythonBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PythonBridge.h; sourceTree = "<group>"; };
 		64F18A2249A6B65023DF6B22 /* __init__.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
 		67EA7BA65A95DEBD9FB64B5B /* LocalPythonKernel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPythonKernel.swift; sourceTree = "<group>"; };
-		6C402D57F9252DAF96C14D24 /* LocalNotebookTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LocalNotebookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C402D57F9252DAF96C14D24 /* LocalNotebookTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LocalNotebookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E3F3E8546E9458D0FDD0D35 /* RecentDocumentsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentDocumentsStore.swift; sourceTree = "<group>"; };
 		7BD08E69FF565C138B8AA418 /* Python.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Python.xcframework; path = Vendor/PythonRuntime/Python.xcframework; sourceTree = "<group>"; };
 		7F3101942BBEA2115CC90827 /* NotebookTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookTheme.swift; sourceTree = "<group>"; };
 		819E6EBB6E47B9AE64AB08F2 /* FilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesView.swift; sourceTree = "<group>"; };
 		838045D6F950243BB957D280 /* PythonSessionActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PythonSessionActor.swift; sourceTree = "<group>"; };
-		8592290DEA9A90D37C63A60C /* MarkdownAndOutputs.ipynb */ = {isa = PBXFileReference; path = MarkdownAndOutputs.ipynb; sourceTree = "<group>"; };
+		8592290DEA9A90D37C63A60C /* MarkdownAndOutputs.ipynb */ = {isa = PBXFileReference; lastKnownFileType = text; path = MarkdownAndOutputs.ipynb; sourceTree = "<group>"; };
 		8AE368ED335F77C78F94D272 /* NotebookEditingReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookEditingReducer.swift; sourceTree = "<group>"; };
 		92328E94BAB0B55B038E1C3B /* NotebookEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookEditorView.swift; sourceTree = "<group>"; };
 		971996F74AE1E83768BA9105 /* KernelClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernelClient.swift; sourceTree = "<group>"; };
@@ -147,7 +147,7 @@
 		DB51B5680790DB4840A1CB10 /* NotebookCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCodec.swift; sourceTree = "<group>"; };
 		DEF235FF08E305E6A2C7F507 /* pyplot.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = pyplot.py; sourceTree = "<group>"; };
 		E031991806174518F4F65424 /* DocumentSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSceneView.swift; sourceTree = "<group>"; };
-		E4F39F5EE79F5A03A72F43D2 /* Welcome.ipynb */ = {isa = PBXFileReference; path = Welcome.ipynb; sourceTree = "<group>"; };
+		E4F39F5EE79F5A03A72F43D2 /* Welcome.ipynb */ = {isa = PBXFileReference; lastKnownFileType = text; path = Welcome.ipynb; sourceTree = "<group>"; };
 		E8DAC394CA615A59D3B74D4F /* AutosaveRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutosaveRecoveryTests.swift; sourceTree = "<group>"; };
 		E9CA6467A4B7121B2C561265 /* DocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentRepository.swift; sourceTree = "<group>"; };
 		EACAD32A075A1DFACE3E6B97 /* JSONValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValue.swift; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 		F9EA0F6EC2E154F6F6F0ADF0 /* LocalNotebookUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotebookUITests.swift; sourceTree = "<group>"; };
 		FA33676F897E8DEE16325626 /* LocalNotebook-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LocalNotebook-Bridging-Header.h"; sourceTree = "<group>"; };
 		FB6CAB559DAB7E9B68F7240C /* ExportFileDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportFileDocument.swift; sourceTree = "<group>"; };
-		FC7E0739BC4EB1DBDFB2A97B /* LocalNotebookUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LocalNotebookUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC7E0739BC4EB1DBDFB2A97B /* LocalNotebookUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LocalNotebookUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -552,9 +552,6 @@
 					B28488FCCDA22E4C84B68A74 = {
 						DevelopmentTeam = "";
 					};
-					E652F3E390853724DD511EFC = {
-						DevelopmentTeam = "";
-					};
 				};
 			};
 			buildConfigurationList = 827F47C48DE643A7373BB301 /* Build configuration list for PBXProject "LocalNotebook" */;
@@ -778,6 +775,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = RVM8AH77W9;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -794,7 +792,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.localnotebook.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ishassan.localnotebook;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "LocalNotebookApp/Support/LocalNotebook-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -942,6 +940,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = RVM8AH77W9;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -958,7 +957,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.localnotebook.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ishassan.localnotebook;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "LocalNotebookApp/Support/LocalNotebook-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
