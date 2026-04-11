@@ -9,6 +9,8 @@ struct NotebookEditorView: View {
     @State private var renameText = ""
     @State private var exportDocument: ExportFileDocument?
     @State private var exportShown = false
+    @State private var selectedCellID: String?
+    @State private var editingCellID: String?
 
     var body: some View {
         ScrollViewReader { scrollProxy in
@@ -101,9 +103,6 @@ struct NotebookEditorView: View {
     private func notebookCellView(cell: NotebookCell, index: Int, scrollProxy: ScrollViewProxy) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text(cell.cellType.rawValue.uppercased())
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
                 Spacer()
                 cellActionMenu(cell: cell, index: index)
             }
@@ -118,8 +117,29 @@ struct NotebookEditorView: View {
                 }
             }
         }
-        .padding(16)
-        .background(NotebookTheme.panelFill(for: colorScheme), in: RoundedRectangle(cornerRadius: NotebookTheme.cardCornerRadius))
+        .padding(.leading, 18)
+        .padding(.trailing, 16)
+        .padding(.vertical, 10)
+        .contentShape(Rectangle())
+        .simultaneousGesture(
+            TapGesture().onEnded {
+                selectCell(cell)
+            }
+        )
+        .simultaneousGesture(
+            TapGesture(count: 2).onEnded {
+                beginEditing(cell)
+            }
+        )
+        .overlay(alignment: .leading) {
+            if selectedCellID == cell.id {
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(Color.white.opacity(0.42))
+                    .frame(width: 4)
+                    .padding(.vertical, 6)
+                    .shadow(color: .white.opacity(0.18), radius: 8, x: 0, y: 0)
+            }
+        }
         .id(cell.id)
     }
 
@@ -127,29 +147,55 @@ struct NotebookEditorView: View {
     private func cellEditorView(cell: NotebookCell, index: Int, scrollProxy: ScrollViewProxy) -> some View {
         switch cell.cellType {
         case .code:
-            CodeTextView(
-                text: cellSourceBinding(for: cell.id, fallbackIndex: index),
-                fontSize: appSession.settings.codeFontSize
-            )
-            .frame(minHeight: 120)
+            codeCellView(cell: cell, index: index)
         case .markdown:
-            if store.renderedMarkdownCellIDs.contains(cell.id) {
+            if editingCellID == cell.id {
+                TextEditor(text: cellSourceBinding(for: cell.id, fallbackIndex: index))
+                    .frame(minHeight: 100)
+                    .font(.system(size: appSession.settings.notebookTextSize))
+            } else {
                 MarkdownPreviewView(
                     markdown: cell.source.joined,
                     baseFontSize: appSession.settings.notebookTextSize,
                     onOpenAnchor: { anchorID in
-                    scrollToAnchor(anchorID, using: scrollProxy)
+                        scrollToAnchor(anchorID, using: scrollProxy)
                     }
                 )
-            } else {
-                TextEditor(text: cellSourceBinding(for: cell.id, fallbackIndex: index))
-                    .frame(minHeight: 100)
-                    .font(.system(size: appSession.settings.notebookTextSize))
             }
         case .raw:
             TextEditor(text: cellSourceBinding(for: cell.id, fallbackIndex: index))
                 .frame(minHeight: 100)
                 .font(.system(size: appSession.settings.notebookTextSize))
+        }
+    }
+
+    @ViewBuilder
+    private func codeCellView(cell: NotebookCell, index: Int) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("In [\(cell.executionCount.map(String.init) ?? " ")]:")
+                .font(.custom("Menlo-Regular", size: max(14, appSession.settings.codeFontSize - 1)))
+                .foregroundStyle(.secondary)
+
+            Group {
+                if editingCellID == cell.id {
+                    CodeTextView(
+                        text: cellSourceBinding(for: cell.id, fallbackIndex: index),
+                        fontSize: appSession.settings.codeFontSize,
+                        colorScheme: colorScheme
+                    )
+                } else {
+                    CodeDisplayView(
+                        text: cell.source.joined,
+                        fontSize: appSession.settings.codeFontSize,
+                        colorScheme: colorScheme
+                    )
+                }
+            }
+            .padding(.horizontal, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.05))
+            )
         }
     }
 
@@ -165,6 +211,30 @@ struct NotebookEditorView: View {
         withAnimation(.easeInOut(duration: 0.2)) {
             scrollProxy.scrollTo(targetCellID, anchor: .top)
         }
+    }
+
+    private func selectCell(_ cell: NotebookCell) {
+        if editingCellID != cell.id {
+            finishEditingCurrentCell()
+        }
+        selectedCellID = cell.id
+    }
+
+    private func beginEditing(_ cell: NotebookCell) {
+        selectedCellID = cell.id
+        editingCellID = cell.id
+        if cell.cellType == .markdown {
+            store.editMarkdown(cell.id)
+        }
+    }
+
+    private func finishEditingCurrentCell() {
+        guard let editingCellID else { return }
+        if let cell = store.notebook?.cells.first(where: { $0.id == editingCellID }),
+           cell.cellType == .markdown {
+            store.previewMarkdown(editingCellID)
+        }
+        self.editingCellID = nil
     }
 
     private var addCellButton: some View {
