@@ -60,21 +60,68 @@ struct CodeTextView: UIViewRepresentable {
     final class Coordinator: NSObject, UITextViewDelegate {
         private var text: Binding<String>
         var hasAppliedInitialText = false
+        private var pendingHighlightWorkItem: DispatchWorkItem?
 
         init(text: Binding<String>) {
             self.text = text
         }
 
         func textViewDidChange(_ textView: UITextView) {
-            let selectedRange = textView.selectedRange
             text.wrappedValue = textView.text
-            textView.attributedText = CodeAttributedStringRenderer.attributedString(
-                code: textView.text,
-                fontSize: (textView.font ?? CodeTypography.font(size: 16)).pointSize,
-                colorScheme: textView.traitCollection.userInterfaceStyle == .dark ? .dark : .light
-            )
-            textView.selectedRange = NSRange(location: min(selectedRange.location, textView.attributedText.length), length: 0)
+            scheduleHighlight(for: textView)
         }
+
+        func scheduleHighlight(for textView: UITextView) {
+            pendingHighlightWorkItem?.cancel()
+            let selectedRange = textView.selectedRange
+            let code = textView.text ?? ""
+            let fontSize = (textView.font ?? CodeTypography.font(size: 16)).pointSize
+            let colorScheme: ColorScheme = textView.traitCollection.userInterfaceStyle == .dark ? .dark : .light
+
+            let workItem = DispatchWorkItem { [weak textView] in
+                guard let textView else { return }
+                textView.attributedText = CodeAttributedStringRenderer.attributedString(
+                    code: code,
+                    fontSize: fontSize,
+                    colorScheme: colorScheme
+                )
+                textView.selectedRange = NSRange(location: min(selectedRange.location, textView.attributedText.length), length: selectedRange.length)
+                textView.typingAttributes = CodeAttributedStringRenderer.typingAttributes(
+                    fontSize: fontSize,
+                    colorScheme: colorScheme
+                )
+            }
+            pendingHighlightWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.08, execute: workItem)
+        }
+    }
+}
+
+struct CodeEditorSurface: View {
+    @Binding var text: String
+    var fontSize: CGFloat
+    var colorScheme: ColorScheme
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 14) {
+            CodeLineNumberView(
+                text: text,
+                fontSize: fontSize,
+                colorScheme: colorScheme
+            )
+
+            CodeTextView(
+                text: $text,
+                fontSize: fontSize,
+                colorScheme: colorScheme
+            )
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(colorScheme == .dark ? Color.white.opacity(0.08) : Color.black.opacity(0.05))
+        )
     }
 }
 

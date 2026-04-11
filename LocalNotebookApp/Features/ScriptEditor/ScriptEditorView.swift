@@ -25,10 +25,12 @@ struct ScriptEditorView: View {
                 .padding(16)
                 .background(NotebookTheme.panelFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 16))
 
-                CodeTextView(text: Binding(get: { store.textContent }, set: { store.updateText($0) }), fontSize: appSession.settings.codeFontSize)
-                    .frame(minHeight: 260)
-                    .padding(12)
-                    .background(NotebookTheme.panelFill(for: colorScheme), in: RoundedRectangle(cornerRadius: 18))
+                CodeEditorSurface(
+                    text: Binding(get: { store.textContent }, set: { store.updateText($0) }),
+                    fontSize: appSession.settings.codeFontSize,
+                    colorScheme: colorScheme
+                )
+                .frame(minHeight: 260)
 
                 if let outputCell = store.notebook?.cells.first, !outputCell.outputs.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
