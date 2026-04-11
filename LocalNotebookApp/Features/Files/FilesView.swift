@@ -40,9 +40,7 @@ struct FilesView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(appSession.documents) { snapshot in
-                        NavigationLink {
-                            DocumentSceneView(documentID: snapshot.id)
-                        } label: {
+                        NavigationLink(value: snapshot.id) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(snapshot.displayName)
                                 Text(snapshot.kind.rawValue.uppercased())

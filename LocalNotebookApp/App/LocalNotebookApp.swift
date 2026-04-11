@@ -15,6 +15,11 @@ struct LocalNotebookAppMain: App {
                     }
                     await container.appSession.refresh()
                 }
+                .onOpenURL { url in
+                    Task {
+                        _ = await container.appSession.importDocument(from: url, openAfterImport: true)
+                    }
+                }
         }
     }
 }

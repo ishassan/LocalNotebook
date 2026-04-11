@@ -5,8 +5,11 @@ struct RootTabView: View {
 
     var body: some View {
         TabView(selection: Binding(get: { appSession.selectedTab }, set: { appSession.selectedTab = $0 })) {
-            NavigationStack {
+            NavigationStack(path: Binding(get: { appSession.filesNavigationPath }, set: { appSession.filesNavigationPath = $0 })) {
                 FilesView()
+                    .navigationDestination(for: UUID.self) { documentID in
+                        DocumentSceneView(documentID: documentID)
+                    }
             }
             .tabItem {
                 Label("Files", systemImage: "folder")

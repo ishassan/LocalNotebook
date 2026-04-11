@@ -11,6 +11,7 @@ final class AppSessionStore {
 
     var documents: [DocumentSnapshot] = []
     var selectedTab: Int = 0
+    var filesNavigationPath: [UUID] = []
     var lastError: String?
     var runningSessions: [RunningSessionSummary] = []
 
@@ -63,11 +64,15 @@ final class AppSessionStore {
         }
     }
 
-    func importDocument(from url: URL) async -> DocumentSnapshot? {
+    func importDocument(from url: URL, openAfterImport: Bool = false) async -> DocumentSnapshot? {
         do {
             let strategy: ImportStrategy = settings.openImportedFilesAsCopy ? .copyIntoAppStorage : .keepExternalBookmark
             let snapshot = try await repository.importDocument(from: url, strategy: strategy)
             await refresh()
+            if openAfterImport {
+                selectedTab = 0
+                filesNavigationPath = [snapshot.id]
+            }
             return snapshot
         } catch {
             lastError = error.localizedDescription

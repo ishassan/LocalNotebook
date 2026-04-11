@@ -25,6 +25,56 @@ final class ExecutionSessionTests: XCTestCase {
         let outputs = await MainActor.run { store.notebook?.cells[1].outputs ?? [] }
         XCTAssertEqual(outputs.first?.data["text/plain"], .string("5"))
     }
+
+    func testRunAllRendersMarkdownCells() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let repository = DocumentRepository(rootURL: root)
+        let snapshot = try await repository.createNotebook(named: "Markdown")
+
+        let notebook = NotebookDocument(
+            cells: [
+                NotebookCell(id: "m1", cellType: .markdown, source: .string("# Title")),
+                NotebookCell(id: "c1", cellType: .code, source: .string("print('ok')"))
+            ]
+        )
+        try await repository.saveNotebook(notebook, for: snapshot.id)
+
+        let appSession = await MainActor.run { AppSessionStore(repository: repository) }
+        let kernel = MockKernelClient(sessionID: snapshot.id)
+        let store = await MainActor.run { DocumentEditorStore(documentID: snapshot.id, appSession: appSession, kernel: kernel) }
+        await store.load()
+        await store.runAll()
+
+        let renderedIDs = await MainActor.run { store.renderedMarkdownCellIDs }
+        XCTAssertTrue(renderedIDs.contains("m1"))
+    }
+
+    func testImportDocumentCanSelectFilesTabAndOpenImportedNotebook() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let repository = DocumentRepository(rootURL: root)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        let externalURL = root.appendingPathComponent("External.ipynb")
+        try """
+        {
+          "cells": [],
+          "metadata": {},
+          "nbformat": 4,
+          "nbformat_minor": 5
+        }
+        """.write(to: externalURL, atomically: true, encoding: .utf8)
+
+        let appSession = await MainActor.run { AppSessionStore(repository: repository) }
+        await MainActor.run {
+            appSession.settings.openImportedFilesAsCopy = true
+        }
+        let snapshot = await appSession.importDocument(from: externalURL, openAfterImport: true)
+
+        let selectedTab = await MainActor.run { appSession.selectedTab }
+        let path = await MainActor.run { appSession.filesNavigationPath }
+
+        XCTAssertEqual(selectedTab, 0)
+        XCTAssertEqual(path, [snapshot?.id].compactMap { $0 })
+    }
 }
 
 private actor MockKernelClient: KernelClient {

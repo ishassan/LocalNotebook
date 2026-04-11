@@ -14,6 +14,7 @@ final class DocumentEditorStore {
     var textContent: String = ""
     var isLoading = false
     var isSaving = false
+    var renderedMarkdownCellIDs = Set<String>()
     var kernelState: KernelState = .idle {
         didSet { updateRunningSession() }
     }
@@ -148,6 +149,9 @@ final class DocumentEditorStore {
     func updateCellSource(cellID: String, source: String) {
         guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }) else { return }
         notebook?.cells[index].source = .string(source)
+        if notebook?.cells[index].cellType == .markdown {
+            renderedMarkdownCellIDs.remove(cellID)
+        }
         scheduleAutosave()
     }
 
@@ -208,8 +212,12 @@ final class DocumentEditorStore {
     }
 
     func runCell(_ cellID: String) async {
-        guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }),
-              notebook?.cells[index].cellType == .code,
+        guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }) else { return }
+        if notebook?.cells[index].cellType == .markdown {
+            renderedMarkdownCellIDs.insert(cellID)
+            return
+        }
+        guard notebook?.cells[index].cellType == .code,
               let code = notebook?.cells[index].source.joined else { return }
         await execute(code: code) { [weak self] result in
             guard let self else { return }
@@ -221,7 +229,7 @@ final class DocumentEditorStore {
 
     func runAll() async {
         guard let cells = notebook?.cells else { return }
-        for cell in cells where cell.cellType == .code {
+        for cell in cells where cell.cellType == .code || cell.cellType == .markdown {
             await runCell(cell.id)
         }
     }
@@ -229,7 +237,7 @@ final class DocumentEditorStore {
     func runAbove(_ cellID: String) async {
         guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }) else { return }
         let cells = notebook?.cells.prefix(index) ?? []
-        for cell in cells where cell.cellType == .code {
+        for cell in cells where cell.cellType == .code || cell.cellType == .markdown {
             await runCell(cell.id)
         }
     }
@@ -237,9 +245,17 @@ final class DocumentEditorStore {
     func runAllBelow(_ cellID: String) async {
         guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }) else { return }
         let cells = notebook?.cells.suffix(from: index) ?? []
-        for cell in cells where cell.cellType == .code {
+        for cell in cells where cell.cellType == .code || cell.cellType == .markdown {
             await runCell(cell.id)
         }
+    }
+
+    func previewMarkdown(_ cellID: String) {
+        renderedMarkdownCellIDs.insert(cellID)
+    }
+
+    func editMarkdown(_ cellID: String) {
+        renderedMarkdownCellIDs.remove(cellID)
     }
 
     func runScript() async {

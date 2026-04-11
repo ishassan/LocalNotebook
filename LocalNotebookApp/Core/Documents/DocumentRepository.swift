@@ -227,7 +227,7 @@ actor DocumentRepository: DocumentRepositoryProtocol {
         externalBookmarkKey: String?,
         createdAt: Date = Date()
     ) throws -> DocumentSnapshot {
-        let safeName = sanitizedFileName(baseName)
+        let safeName = try uniqueSanitizedFileName(baseName, kind: kind, excluding: id)
         let filename = "\(safeName).\(kind.fileExtension)"
         return DocumentSnapshot(
             id: id,
@@ -299,6 +299,18 @@ actor DocumentRepository: DocumentRepositoryProtocol {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         let collapsed = trimmed.components(separatedBy: invalid).joined(separator: "-")
         return collapsed.isEmpty ? "Untitled" : collapsed
+    }
+
+    private func uniqueSanitizedFileName(_ value: String, kind: DocumentKind, excluding id: UUID) throws -> String {
+        let registry = try loadRegistry()
+        let base = sanitizedFileName(value)
+        var candidate = base
+        var counter = 2
+        while registry.contains(where: { $0.id != id && $0.relativePath == "\(candidate).\(kind.fileExtension)" }) {
+            candidate = "\(base) \(counter)"
+            counter += 1
+        }
+        return candidate
     }
 }
 

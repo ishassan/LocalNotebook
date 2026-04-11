@@ -4,7 +4,6 @@ struct NotebookEditorView: View {
     @Bindable var store: DocumentEditorStore
     @Environment(AppSessionStore.self) private var appSession
 
-    @State private var previewedMarkdownCellIDs = Set<String>()
     @State private var renamePromptShown = false
     @State private var renameText = ""
     @State private var exportDocument: ExportFileDocument?
@@ -36,7 +35,7 @@ struct NotebookEditorView: View {
                             )
                             .frame(minHeight: 120)
                         case .markdown:
-                            if previewedMarkdownCellIDs.contains(cell.id) {
+                            if store.renderedMarkdownCellIDs.contains(cell.id) {
                                 MarkdownPreviewView(markdown: cell.source.joined)
                             } else {
                                 TextEditor(text: Binding(
@@ -205,11 +204,11 @@ struct NotebookEditorView: View {
                 Button("Run All Below") { Task { await store.runAllBelow(cell.id) } }
             }
             if cell.cellType == .markdown {
-                Button(previewedMarkdownCellIDs.contains(cell.id) ? "Edit Markdown" : "Preview Markdown") {
-                    if previewedMarkdownCellIDs.contains(cell.id) {
-                        previewedMarkdownCellIDs.remove(cell.id)
+                Button(store.renderedMarkdownCellIDs.contains(cell.id) ? "Edit Markdown" : "Preview Markdown") {
+                    if store.renderedMarkdownCellIDs.contains(cell.id) {
+                        store.editMarkdown(cell.id)
                     } else {
-                        previewedMarkdownCellIDs.insert(cell.id)
+                        store.previewMarkdown(cell.id)
                     }
                 }
             }
