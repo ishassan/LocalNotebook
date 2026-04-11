@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import UniformTypeIdentifiers
+import UIKit
 
 @MainActor
 @Observable
@@ -20,6 +21,7 @@ final class DocumentEditorStore {
     }
     var statusMessage: String = "Idle"
     var errorMessage: String?
+    private var lastDeletedCell: (cell: NotebookCell, index: Int)?
 
     init(documentID: UUID, appSession: AppSessionStore, kernel: (any KernelClient)? = nil) {
         self.documentID = documentID
@@ -205,7 +207,7 @@ final class DocumentEditorStore {
 
     func deleteCell(_ cellID: String) {
         guard var notebook else { return }
-        NotebookEditingReducer.deleteCell(&notebook, id: cellID)
+        lastDeletedCell = NotebookEditingReducer.deleteCell(&notebook, id: cellID)
         self.notebook = notebook
         renderedMarkdownCellIDs.remove(cellID)
         scheduleAutosave()
@@ -286,6 +288,132 @@ final class DocumentEditorStore {
         }
     }
 
+    func runAndSelectNext(_ cellID: String) async -> String? {
+        await runCell(cellID)
+        return nextCellID(after: cellID)
+    }
+
+    func restartAndRunAll() async {
+        await restartKernel()
+        guard kernelState != .unavailable else { return }
+        await runAll()
+    }
+
+    func moveCellUp(_ cellID: String) -> String? {
+        moveCell(cellID, offset: -1)
+    }
+
+    func moveCellDown(_ cellID: String) -> String? {
+        moveCell(cellID, offset: 1)
+    }
+
+    func mergeCellAbove(_ cellID: String) -> String? {
+        guard var notebook,
+              let index = notebook.cells.firstIndex(where: { $0.id == cellID }),
+              notebook.cells.indices.contains(index - 1) else { return nil }
+        let targetID = notebook.cells[index - 1].id
+        NotebookEditingReducer.mergeCellWithPrevious(&notebook, id: cellID)
+        self.notebook = notebook
+        scheduleAutosave()
+        return targetID
+    }
+
+    func mergeCellBelow(_ cellID: String) -> String? {
+        guard var notebook else { return nil }
+        NotebookEditingReducer.mergeCellWithNext(&notebook, id: cellID)
+        self.notebook = notebook
+        scheduleAutosave()
+        return cellID
+    }
+
+    func undoDelete() -> String? {
+        guard var notebook, let lastDeletedCell else { return nil }
+        let safeIndex = max(0, min(lastDeletedCell.index, notebook.cells.count))
+        notebook.cells.insert(lastDeletedCell.cell, at: safeIndex)
+        self.notebook = notebook
+        if lastDeletedCell.cell.cellType == .markdown {
+            renderedMarkdownCellIDs.insert(lastDeletedCell.cell.id)
+        }
+        self.lastDeletedCell = nil
+        scheduleAutosave()
+        return lastDeletedCell.cell.id
+    }
+
+    func matchingCellIDs(for query: String) -> [String] {
+        guard !query.isEmpty else { return [] }
+        return notebook?.cells.compactMap { cell in
+            cell.source.joined.localizedCaseInsensitiveContains(query) ? cell.id : nil
+        } ?? []
+    }
+
+    func replaceFirstMatch(of searchText: String, with replacementText: String, in cellID: String) {
+        guard !searchText.isEmpty,
+              let index = notebook?.cells.firstIndex(where: { $0.id == cellID }) else { return }
+        let source = notebook?.cells[index].source.joined ?? ""
+        guard let range = source.range(of: searchText, options: .caseInsensitive) else { return }
+        updateCellSource(cellID: cellID, source: source.replacingCharacters(in: range, with: replacementText))
+    }
+
+    @discardableResult
+    func replaceAllMatches(of searchText: String, with replacementText: String) -> Int {
+        guard !searchText.isEmpty else { return 0 }
+        var replacements = 0
+        guard let cellIDs = notebook?.cells.map(\.id) else { return 0 }
+        for cellID in cellIDs {
+            guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }) else { continue }
+            let source = notebook?.cells[index].source.joined ?? ""
+            if source.localizedCaseInsensitiveContains(searchText) {
+                let updated = source.replacingOccurrences(of: searchText, with: replacementText, options: .caseInsensitive)
+                replacements += updated == source ? 0 : 1
+                updateCellSource(cellID: cellID, source: updated)
+            }
+        }
+        return replacements
+    }
+
+    func copyCell(_ cellID: String) {
+        guard let cell = notebook?.cells.first(where: { $0.id == cellID }) else { return }
+        guard let data = try? JSONEncoder().encode(CellClipboardPayload(cellType: cell.cellType, source: cell.source.joined)),
+              let payload = String(data: data, encoding: .utf8) else { return }
+        UIPasteboard.general.string = Self.cellClipboardPrefix + payload
+    }
+
+    func cutCell(_ cellID: String) {
+        copyCell(cellID)
+        deleteCell(cellID)
+    }
+
+    func pasteCell(into cellID: String) -> String? {
+        guard let pasted = UIPasteboard.general.string else { return nil }
+        if pasted.hasPrefix(Self.cellClipboardPrefix) {
+            let payloadString = String(pasted.dropFirst(Self.cellClipboardPrefix.count))
+            guard let data = payloadString.data(using: .utf8),
+                  let payload = try? JSONDecoder().decode(CellClipboardPayload.self, from: data) else { return nil }
+            setCellType(payload.cellType, cellID: cellID)
+            updateCellSource(cellID: cellID, source: payload.source)
+            return cellID
+        }
+
+        guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }) else { return nil }
+        let existing = notebook?.cells[index].source.joined ?? ""
+        let separator = existing.isEmpty ? "" : "\n"
+        updateCellSource(cellID: cellID, source: existing + separator + pasted)
+        return cellID
+    }
+
+    func previousCellID(before cellID: String) -> String? {
+        guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }),
+              index > 0 else { return nil }
+        return notebook?.cells[index - 1].id
+    }
+
+    func nextCellID(after cellID: String) -> String? {
+        guard let index = notebook?.cells.firstIndex(where: { $0.id == cellID }),
+              let notebook,
+              notebook.cells.indices.contains(index + 1) else { return nil }
+        return notebook.cells[index + 1].id
+    }
+
     func previewMarkdown(_ cellID: String) {
         renderedMarkdownCellIDs.insert(cellID)
     }
@@ -337,4 +465,22 @@ final class DocumentEditorStore {
             errorMessage = error.localizedDescription
         }
     }
+
+    private func moveCell(_ cellID: String, offset: Int) -> String? {
+        guard var notebook,
+              let index = notebook.cells.firstIndex(where: { $0.id == cellID }) else { return nil }
+        let destination = index + offset
+        guard destination >= 0, destination <= notebook.cells.count - 1 else { return nil }
+        NotebookEditingReducer.moveCell(&notebook, from: index, to: destination)
+        self.notebook = notebook
+        scheduleAutosave()
+        return cellID
+    }
+
+    private static let cellClipboardPrefix = "localnotebook-cell:"
+}
+
+private struct CellClipboardPayload: Codable {
+    let cellType: NotebookCellType
+    let source: String
 }

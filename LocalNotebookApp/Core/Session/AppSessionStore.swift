@@ -1,6 +1,13 @@
 import Foundation
 import Observation
 
+enum AppTab: Int, Sendable {
+    case browse = 0
+    case recents = 1
+    case packages = 2
+    case settings = 3
+}
+
 @MainActor
 @Observable
 final class AppSessionStore {
@@ -10,7 +17,7 @@ final class AppSessionStore {
     let autosaveCoordinator: AutosaveCoordinator
 
     var documents: [DocumentSnapshot] = []
-    var selectedTab: Int = 0
+    var selectedTab: Int = AppTab.browse.rawValue
     var filesNavigationPath: [UUID] = []
     var lastError: String?
     var runningSessions: [RunningSessionSummary] = []

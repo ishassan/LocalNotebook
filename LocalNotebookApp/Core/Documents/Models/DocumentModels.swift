@@ -30,6 +30,24 @@ enum DocumentKind: String, Codable, CaseIterable, Identifiable, Sendable {
             .plainText
         }
     }
+
+    var title: String {
+        switch self {
+        case .notebook: "Notebook"
+        case .python: "Python"
+        case .markdown: "Markdown"
+        case .text: "Text"
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .notebook: "book.closed"
+        case .python: "curlybraces.square"
+        case .markdown: "text.alignleft"
+        case .text: "doc.plaintext"
+        }
+    }
 }
 
 enum ImportStrategy: String, Codable, CaseIterable, Sendable {

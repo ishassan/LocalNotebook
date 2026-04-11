@@ -47,6 +47,9 @@ final class SettingsStore {
     var clearOutputsOnExport: Bool {
         didSet { persist() }
     }
+    var pinnedPackageNames: Set<String> {
+        didSet { persist() }
+    }
 
     private let userDefaults: UserDefaults
     private let storageKey = "settingsStore"
@@ -62,6 +65,7 @@ final class SettingsStore {
             openImportedFilesAsCopy = persisted.openImportedFilesAsCopy
             clearOutputsOnDuplicate = persisted.clearOutputsOnDuplicate
             clearOutputsOnExport = persisted.clearOutputsOnExport
+            pinnedPackageNames = persisted.pinnedPackageNames
         } else {
             theme = .dark
             codeFontSize = 15
@@ -70,6 +74,7 @@ final class SettingsStore {
             openImportedFilesAsCopy = true
             clearOutputsOnDuplicate = false
             clearOutputsOnExport = false
+            pinnedPackageNames = ["matplotlib"]
         }
     }
 
@@ -81,7 +86,8 @@ final class SettingsStore {
             autosaveEnabled: autosaveEnabled,
             openImportedFilesAsCopy: openImportedFilesAsCopy,
             clearOutputsOnDuplicate: clearOutputsOnDuplicate,
-            clearOutputsOnExport: clearOutputsOnExport
+            clearOutputsOnExport: clearOutputsOnExport,
+            pinnedPackageNames: pinnedPackageNames
         )
         userDefaults.set(try? JSONEncoder().encode(persisted), forKey: storageKey)
     }
@@ -94,5 +100,6 @@ final class SettingsStore {
         var openImportedFilesAsCopy: Bool
         var clearOutputsOnDuplicate: Bool
         var clearOutputsOnExport: Bool
+        var pinnedPackageNames: Set<String>
     }
 }

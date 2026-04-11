@@ -15,8 +15,11 @@ enum NotebookEditingReducer {
         notebook.cells.insert(cell, at: safeIndex)
     }
 
-    static func deleteCell(_ notebook: inout NotebookDocument, id: String) {
-        notebook.cells.removeAll { $0.id == id }
+    @discardableResult
+    static func deleteCell(_ notebook: inout NotebookDocument, id: String) -> (cell: NotebookCell, index: Int)? {
+        guard let index = notebook.cells.firstIndex(where: { $0.id == id }) else { return nil }
+        let removed = notebook.cells.remove(at: index)
+        return (removed, index)
     }
 
     static func duplicateCell(_ notebook: inout NotebookDocument, id: String) {
@@ -35,9 +38,10 @@ enum NotebookEditingReducer {
     }
 
     static func moveCell(_ notebook: inout NotebookDocument, from source: Int, to destination: Int) {
-        guard notebook.cells.indices.contains(source), notebook.cells.indices.contains(max(0, min(destination, notebook.cells.count - 1))) else { return }
+        guard notebook.cells.indices.contains(source) else { return }
         let cell = notebook.cells.remove(at: source)
-        notebook.cells.insert(cell, at: destination)
+        let safeDestination = max(0, min(destination, notebook.cells.count))
+        notebook.cells.insert(cell, at: safeDestination)
     }
 
     static func clearOutputs(_ notebook: inout NotebookDocument) {
@@ -67,7 +71,16 @@ enum NotebookEditingReducer {
     static func mergeCellWithNext(_ notebook: inout NotebookDocument, id: String) {
         guard let index = notebook.cells.firstIndex(where: { $0.id == id }),
               notebook.cells.indices.contains(index + 1) else { return }
-        notebook.cells[index].source = .string(notebook.cells[index].source.joined + notebook.cells[index + 1].source.joined)
+        let leading = notebook.cells[index].source.joined
+        let trailing = notebook.cells[index + 1].source.joined
+        let separator = (leading.isEmpty || trailing.isEmpty || leading.hasSuffix("\n")) ? "" : "\n"
+        notebook.cells[index].source = .string(leading + separator + trailing)
         notebook.cells.remove(at: index + 1)
+    }
+
+    static func mergeCellWithPrevious(_ notebook: inout NotebookDocument, id: String) {
+        guard let index = notebook.cells.firstIndex(where: { $0.id == id }),
+              notebook.cells.indices.contains(index - 1) else { return }
+        mergeCellWithNext(&notebook, id: notebook.cells[index - 1].id)
     }
 }

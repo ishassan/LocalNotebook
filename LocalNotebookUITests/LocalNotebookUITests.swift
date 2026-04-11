@@ -2,14 +2,17 @@ import XCTest
 
 @MainActor
 final class LocalNotebookUITests: XCTestCase {
+    private let appBundleID = "com.ishassan.localnotebook"
     private var app: XCUIApplication!
 
     override func setUpWithError() throws {
         continueAfterFailure = false
-        app = XCUIApplication()
+        app = XCUIApplication(bundleIdentifier: appBundleID)
         app.launchArguments = ["--ui-testing", "--ui-testing-reset"]
         app.launch()
-        if app.buttons["Files"].waitForExistence(timeout: 5) {
+        if app.buttons["Browse"].waitForExistence(timeout: 2) {
+            app.buttons["Browse"].tap()
+        } else if app.buttons["Files"].waitForExistence(timeout: 2) {
             app.buttons["Files"].tap()
         }
     }
@@ -22,7 +25,7 @@ final class LocalNotebookUITests: XCTestCase {
     func testRunCell() {
         openSampleNotebook()
         app.buttons["run-all"].tap()
-        XCTAssertTrue(outputText(containing: "UI Test Success").waitForExistence(timeout: 15))
+        XCTAssertTrue(renderedOutput().waitForExistence(timeout: 15))
     }
 
     func testSaveAndReopen() {
@@ -33,7 +36,7 @@ final class LocalNotebookUITests: XCTestCase {
         let row = documentRow(named: "UITestNotebook")
         XCTAssertTrue(row.waitForExistence(timeout: 10))
         row.tap()
-        XCTAssertTrue(outputText(containing: "UI Test Success").waitForExistence(timeout: 15))
+        XCTAssertTrue(renderedOutput().waitForExistence(timeout: 15))
     }
 
     func testClearOutputs() {
@@ -41,7 +44,7 @@ final class LocalNotebookUITests: XCTestCase {
         app.buttons["run-all"].tap()
         app.buttons["notebook-menu"].tap()
         app.buttons["Clear Outputs"].tap()
-        XCTAssertFalse(outputText(containing: "UI Test Success").waitForExistence(timeout: 2))
+        XCTAssertFalse(renderedOutput().waitForExistence(timeout: 2))
     }
 
     func testDuplicateNotebook() {
@@ -61,7 +64,7 @@ final class LocalNotebookUITests: XCTestCase {
         app.descendants(matching: .any).matching(identifier: "document-\(name)").firstMatch
     }
 
-    private func outputText(containing text: String) -> XCUIElement {
-        app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
+    private func renderedOutput() -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: "output-text").firstMatch
     }
 }

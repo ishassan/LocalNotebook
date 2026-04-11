@@ -12,25 +12,25 @@ struct RootTabView: View {
                     }
             }
             .tabItem {
-                Label("Files", systemImage: "folder")
+                Label("Browse", systemImage: "folder")
             }
-            .tag(0)
+            .tag(AppTab.browse.rawValue)
 
             NavigationStack {
                 RecentsView()
             }
             .tabItem {
-                Label("Recents", systemImage: "clock.arrow.circlepath")
+                Label("Recents", systemImage: "clock")
             }
-            .tag(1)
+            .tag(AppTab.recents.rawValue)
 
             NavigationStack {
-                RunningSessionsView()
+                PackagesView()
             }
             .tabItem {
-                Label("Sessions", systemImage: "play.circle")
+                Label("Packages", systemImage: "cube.box")
             }
-            .tag(2)
+            .tag(AppTab.packages.rawValue)
 
             NavigationStack {
                 SettingsView()
@@ -38,16 +38,20 @@ struct RootTabView: View {
             .tabItem {
                 Label("Settings", systemImage: "gearshape")
             }
-            .tag(3)
+            .tag(AppTab.settings.rawValue)
         }
-        .overlay(alignment: .bottom) {
+        .tint(NotebookTheme.accent)
+        .toolbarBackground(Color.black.opacity(0.96), for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
+        .overlay(alignment: .top) {
             if let lastError = appSession.lastError {
                 Text(lastError)
-                    .font(.footnote)
+                    .font(.footnote.weight(.medium))
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(.thinMaterial, in: Capsule())
-                    .padding(.bottom, 8)
+                    .foregroundStyle(.white)
+                    .background(Color(red: 0.22, green: 0.08, blue: 0.08), in: Capsule())
+                    .padding(.top, 10)
             }
         }
     }
