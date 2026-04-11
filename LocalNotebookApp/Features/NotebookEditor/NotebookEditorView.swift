@@ -134,9 +134,13 @@ struct NotebookEditorView: View {
             .frame(minHeight: 120)
         case .markdown:
             if store.renderedMarkdownCellIDs.contains(cell.id) {
-                MarkdownPreviewView(markdown: cell.source.joined, onOpenAnchor: { anchorID in
+                MarkdownPreviewView(
+                    markdown: cell.source.joined,
+                    baseFontSize: appSession.settings.notebookTextSize,
+                    onOpenAnchor: { anchorID in
                     scrollToAnchor(anchorID, using: scrollProxy)
-                })
+                    }
+                )
             } else {
                 TextEditor(text: cellSourceBinding(for: cell.id, fallbackIndex: index))
                     .frame(minHeight: 100)

@@ -3,10 +3,12 @@ import UIKit
 
 struct MarkdownPreviewView: View {
     let markdown: String
+    let baseFontSize: CGFloat
     let onOpenAnchor: ((String) -> Void)?
 
-    init(markdown: String, onOpenAnchor: ((String) -> Void)? = nil) {
+    init(markdown: String, baseFontSize: CGFloat = 16, onOpenAnchor: ((String) -> Void)? = nil) {
         self.markdown = markdown
+        self.baseFontSize = baseFontSize
         self.onOpenAnchor = onOpenAnchor
     }
 
@@ -15,6 +17,7 @@ struct MarkdownPreviewView: View {
     var body: some View {
         MarkdownTextView(
             markdown: markdown,
+            baseFontSize: baseFontSize,
             colorScheme: colorScheme,
             onOpenAnchor: onOpenAnchor
         )
@@ -23,6 +26,7 @@ struct MarkdownPreviewView: View {
 
 private struct MarkdownTextView: UIViewRepresentable {
     let markdown: String
+    let baseFontSize: CGFloat
     let colorScheme: ColorScheme
     let onOpenAnchor: ((String) -> Void)?
 
@@ -48,6 +52,7 @@ private struct MarkdownTextView: UIViewRepresentable {
         context.coordinator.onOpenAnchor = onOpenAnchor
         let attributed = MarkdownAttributedStringCache.shared.attributedString(
             markdown: markdown,
+            baseFontSize: baseFontSize,
             colorScheme: colorScheme
         )
         if uiView.attributedText != attributed {
@@ -114,24 +119,28 @@ private final class MarkdownAttributedStringCache {
 
     private let cache = NSCache<NSString, NSAttributedString>()
 
-    func attributedString(markdown: String, colorScheme: ColorScheme) -> NSAttributedString {
-        let key = "\(colorScheme == .dark ? "dark" : "light")::\(markdown)" as NSString
+    func attributedString(markdown: String, baseFontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
+        let key = "\(colorScheme == .dark ? "dark" : "light")::\(baseFontSize)::\(markdown)" as NSString
         if let cached = cache.object(forKey: key) {
             return cached
         }
 
-        let attributed = render(markdown: markdown, colorScheme: colorScheme)
+        let attributed = render(markdown: markdown, baseFontSize: baseFontSize, colorScheme: colorScheme)
         cache.setObject(attributed, forKey: key)
         return attributed
     }
 
-    private func render(markdown: String, colorScheme: ColorScheme) -> NSAttributedString {
-        MarkdownAttributedStringRenderer.attributedString(markdown: markdown, colorScheme: colorScheme)
+    private func render(markdown: String, baseFontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
+        MarkdownAttributedStringRenderer.attributedString(
+            markdown: markdown,
+            baseFontSize: baseFontSize,
+            colorScheme: colorScheme
+        )
     }
 }
 
 private enum MarkdownAttributedStringRenderer {
-    static func attributedString(markdown: String, colorScheme: ColorScheme) -> NSAttributedString {
+    static func attributedString(markdown: String, baseFontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
         let prepared = MarkdownHTMLRenderer.prepare(markdown)
         let lines = prepared.sanitizedMarkdown
             .replacingOccurrences(of: "\r\n", with: "\n")
@@ -156,7 +165,7 @@ private enum MarkdownAttributedStringRenderer {
             appendBlock(
                 inlineAttributedString(
                     for: paragraphText,
-                    attributes: paragraphAttributes(colorScheme: colorScheme)
+                    attributes: paragraphAttributes(baseFontSize: baseFontSize, colorScheme: colorScheme)
                 )
             )
             paragraphLines.removeAll(keepingCapacity: true)
@@ -165,7 +174,7 @@ private enum MarkdownAttributedStringRenderer {
         for line in lines {
             if codeFenceLanguage != nil {
                 if line.trimmingCharacters(in: .whitespaces).hasPrefix("```") {
-                    appendBlock(codeBlock(codeFenceLines.joined(separator: "\n"), colorScheme: colorScheme))
+                    appendBlock(codeBlock(codeFenceLines.joined(separator: "\n"), baseFontSize: baseFontSize, colorScheme: colorScheme))
                     codeFenceLanguage = nil
                     codeFenceLines.removeAll(keepingCapacity: true)
                 } else {
@@ -189,25 +198,25 @@ private enum MarkdownAttributedStringRenderer {
 
             if let heading = MarkdownHTMLRenderer.parseHeading(line) {
                 flushParagraph()
-                appendBlock(headingBlock(heading.text, level: heading.level, colorScheme: colorScheme))
+                appendBlock(headingBlock(heading.text, level: heading.level, baseFontSize: baseFontSize, colorScheme: colorScheme))
                 continue
             }
 
             if let quote = MarkdownHTMLRenderer.parseBlockquote(line) {
                 flushParagraph()
-                appendBlock(blockquoteBlock(quote, colorScheme: colorScheme))
+                appendBlock(blockquoteBlock(quote, baseFontSize: baseFontSize, colorScheme: colorScheme))
                 continue
             }
 
             if let listItem = MarkdownHTMLRenderer.parseListItem(line) {
                 flushParagraph()
-                appendBlock(listBlock(listItem, colorScheme: colorScheme))
+                appendBlock(listBlock(listItem, baseFontSize: baseFontSize, colorScheme: colorScheme))
                 continue
             }
 
             if trimmed == "---" || trimmed == "***" {
                 flushParagraph()
-                appendBlock(horizontalRule(colorScheme: colorScheme))
+                appendBlock(horizontalRule(baseFontSize: baseFontSize, colorScheme: colorScheme))
                 continue
             }
 
@@ -215,15 +224,22 @@ private enum MarkdownAttributedStringRenderer {
         }
 
         if codeFenceLanguage != nil {
-            appendBlock(codeBlock(codeFenceLines.joined(separator: "\n"), colorScheme: colorScheme))
+            appendBlock(codeBlock(codeFenceLines.joined(separator: "\n"), baseFontSize: baseFontSize, colorScheme: colorScheme))
         }
 
         flushParagraph()
         return result
     }
 
-    private static func headingBlock(_ text: String, level: Int, colorScheme: ColorScheme) -> NSAttributedString {
-        let sizes: [CGFloat] = [30, 26, 22, 20, 18, 17]
+    private static func headingBlock(_ text: String, level: Int, baseFontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
+        let sizes: [CGFloat] = [
+            baseFontSize * 1.875,
+            baseFontSize * 1.625,
+            baseFontSize * 1.375,
+            baseFontSize * 1.25,
+            baseFontSize * 1.125,
+            baseFontSize * 1.05
+        ]
         let font = UIFont.systemFont(ofSize: sizes[max(0, min(level - 1, sizes.count - 1))], weight: .bold)
         return inlineAttributedString(
             for: text,
@@ -235,9 +251,9 @@ private enum MarkdownAttributedStringRenderer {
         )
     }
 
-    private static func blockquoteBlock(_ text: String, colorScheme: ColorScheme) -> NSAttributedString {
+    private static func blockquoteBlock(_ text: String, baseFontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
         let attrs = blockAttributes(
-            font: .italicSystemFont(ofSize: 16),
+            font: .italicSystemFont(ofSize: baseFontSize),
             color: colorScheme == .dark ? UIColor(red: 0.78, green: 0.81, blue: 0.86, alpha: 1) : .secondaryLabel,
             paragraphSpacing: 8,
             firstLineHeadIndent: 12,
@@ -248,16 +264,17 @@ private enum MarkdownAttributedStringRenderer {
 
     private static func listBlock(
         _ item: (depth: Int, type: String, text: String),
+        baseFontSize: CGFloat,
         colorScheme: ColorScheme
     ) -> NSAttributedString {
-        let indent = CGFloat(item.depth) * 18
+        let indent = CGFloat(item.depth) * (baseFontSize + 2)
         let prefix = item.type == "ol" ? "1. " : "• "
         let attrs = blockAttributes(
-            font: .systemFont(ofSize: 16),
+            font: .systemFont(ofSize: baseFontSize),
             color: colorScheme == .dark ? .white : .label,
             paragraphSpacing: 4,
             firstLineHeadIndent: indent,
-            headIndent: indent + 20
+            headIndent: indent + baseFontSize + 4
         )
         let result = NSMutableAttributedString(
             string: String(repeating: "\u{00a0}", count: item.depth * 2) + prefix,
@@ -267,9 +284,9 @@ private enum MarkdownAttributedStringRenderer {
         return result
     }
 
-    private static func codeBlock(_ text: String, colorScheme: ColorScheme) -> NSAttributedString {
+    private static func codeBlock(_ text: String, baseFontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
         let attrs = blockAttributes(
-            font: .monospacedSystemFont(ofSize: 14, weight: .regular),
+            font: .monospacedSystemFont(ofSize: max(12, baseFontSize - 2), weight: .regular),
             color: colorScheme == .dark ? .white : .label,
             paragraphSpacing: 8
         ).merging([
@@ -278,20 +295,20 @@ private enum MarkdownAttributedStringRenderer {
         return NSAttributedString(string: text, attributes: attrs)
     }
 
-    private static func horizontalRule(colorScheme: ColorScheme) -> NSAttributedString {
+    private static func horizontalRule(baseFontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
         NSAttributedString(
             string: "──────────",
             attributes: blockAttributes(
-                font: .systemFont(ofSize: 12),
+                font: .systemFont(ofSize: max(10, baseFontSize - 4)),
                 color: colorScheme == .dark ? UIColor.white.withAlphaComponent(0.35) : UIColor.black.withAlphaComponent(0.25),
                 paragraphSpacing: 8
             )
         )
     }
 
-    private static func paragraphAttributes(colorScheme: ColorScheme) -> [NSAttributedString.Key: Any] {
+    private static func paragraphAttributes(baseFontSize: CGFloat, colorScheme: ColorScheme) -> [NSAttributedString.Key: Any] {
         blockAttributes(
-            font: .systemFont(ofSize: 16),
+            font: .systemFont(ofSize: baseFontSize),
             color: colorScheme == .dark ? .white : .label,
             paragraphSpacing: 8
         )
@@ -324,7 +341,8 @@ private enum MarkdownAttributedStringRenderer {
 
         applyInline(pattern: "`([^`]+)`", to: result, baseAttributes: attributes) { match in
             var codeAttributes = attributes
-            codeAttributes[.font] = UIFont.monospacedSystemFont(ofSize: 14, weight: .regular)
+            let baseFont = (attributes[.font] as? UIFont) ?? .systemFont(ofSize: 16)
+            codeAttributes[.font] = UIFont.monospacedSystemFont(ofSize: max(12, baseFont.pointSize - 2), weight: .regular)
             codeAttributes[.backgroundColor] = UIColor.black.withAlphaComponent(0.06)
             return NSAttributedString(string: match[1], attributes: codeAttributes)
         }
