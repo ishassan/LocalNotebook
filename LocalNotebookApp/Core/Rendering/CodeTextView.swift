@@ -110,6 +110,38 @@ struct CodeDisplayView: UIViewRepresentable {
     }
 }
 
+struct CodeLineNumberView: View {
+    let text: String
+    let fontSize: CGFloat
+    let colorScheme: ColorScheme
+
+    var body: some View {
+        Text(lineNumbers)
+            .font(Font(CodeTypography.font(size: fontSize)))
+            .foregroundStyle(colorScheme == .dark ? Color.white.opacity(0.38) : Color.black.opacity(0.45))
+            .lineSpacing(4)
+            .multilineTextAlignment(.trailing)
+            .frame(minWidth: gutterWidth, alignment: .trailing)
+            .padding(.top, 14)
+            .padding(.bottom, 14)
+            .padding(.leading, 6)
+    }
+
+    private var lineNumbers: String {
+        let count = max(1, text.components(separatedBy: "\n").count)
+        let digits = max(2, String(count).count)
+        return (1...count)
+            .map { String(format: "%\(digits)d", $0) }
+            .joined(separator: "\n")
+    }
+
+    private var gutterWidth: CGFloat {
+        let count = max(1, text.components(separatedBy: "\n").count)
+        let digits = max(2, String(count).count)
+        return CGFloat(digits) * fontSize * 0.68 + 10
+    }
+}
+
 enum CodeTypography {
     static func font(size: CGFloat) -> UIFont {
         UIFont(name: "SFMono-Regular", size: size)
@@ -130,36 +162,7 @@ private enum CodeAttributedStringRenderer {
     }
 
     static func attributedString(code: String, fontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
-        let lines = code.components(separatedBy: "\n")
-        let gutterDigits = max(2, String(max(1, lines.count)).count)
-        let result = NSMutableAttributedString()
-
-        for (index, line) in lines.enumerated() {
-            if index > 0 {
-                result.append(NSAttributedString(string: "\n"))
-            }
-
-            result.append(lineNumber(index + 1, digits: gutterDigits, fontSize: fontSize, colorScheme: colorScheme))
-            result.append(highlightedCode(line, fontSize: fontSize, colorScheme: colorScheme))
-        }
-
-        return result
-    }
-
-    private static func lineNumber(_ value: Int, digits: Int, fontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {
-        let padded = String(format: "%\(digits)d", value)
-        let paragraph = NSMutableParagraphStyle()
-        paragraph.lineSpacing = 4
-        return NSAttributedString(
-            string: "\(padded)  ",
-            attributes: [
-                .font: CodeTypography.font(size: fontSize),
-                .foregroundColor: colorScheme == .dark
-                    ? UIColor(white: 0.44, alpha: 1)
-                    : UIColor(white: 0.55, alpha: 1),
-                .paragraphStyle: paragraph
-            ]
-        )
+        highlightedCode(code, fontSize: fontSize, colorScheme: colorScheme)
     }
 
     private static func highlightedCode(_ code: String, fontSize: CGFloat, colorScheme: ColorScheme) -> NSAttributedString {

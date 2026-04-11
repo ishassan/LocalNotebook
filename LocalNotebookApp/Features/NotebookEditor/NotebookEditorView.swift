@@ -176,20 +176,29 @@ struct NotebookEditorView: View {
                 .font(.custom("Menlo-Regular", size: max(14, appSession.settings.codeFontSize - 1)))
                 .foregroundStyle(.secondary)
 
-            Group {
-                if editingCellID == cell.id {
-                    CodeTextView(
-                        text: cellSourceBinding(for: cell.id, fallbackIndex: index),
-                        fontSize: appSession.settings.codeFontSize,
-                        colorScheme: colorScheme
-                    )
-                } else {
-                    CodeDisplayView(
-                        text: cell.source.joined,
-                        fontSize: appSession.settings.codeFontSize,
-                        colorScheme: colorScheme
-                    )
+            HStack(alignment: .top, spacing: 14) {
+                CodeLineNumberView(
+                    text: cell.source.joined,
+                    fontSize: appSession.settings.codeFontSize,
+                    colorScheme: colorScheme
+                )
+
+                Group {
+                    if editingCellID == cell.id {
+                        CodeTextView(
+                            text: cellSourceBinding(for: cell.id, fallbackIndex: index),
+                            fontSize: appSession.settings.codeFontSize,
+                            colorScheme: colorScheme
+                        )
+                    } else {
+                        CodeDisplayView(
+                            text: cell.source.joined,
+                            fontSize: appSession.settings.codeFontSize,
+                            colorScheme: colorScheme
+                        )
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.horizontal, 14)
             .background(
