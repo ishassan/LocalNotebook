@@ -47,6 +47,7 @@
 		8D18B7EE2D09545013C469BA /* KernelModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145D7E30E8F15AFA92BB04D4 /* KernelModels.swift */; };
 		8D461AF61ECBB223D695EE96 /* MultilineTextValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591BAF0A2B9EF687DB25A253 /* MultilineTextValue.swift */; };
 		8E52B6BE1EF2030FE50F811A /* LocalPythonKernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EA7BA65A95DEBD9FB64B5B /* LocalPythonKernel.swift */; };
+		95B9B7D0494CD1E561653852 /* UITestKernelClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FBD3258F9C9A51E710001D /* UITestKernelClient.swift */; };
 		A459CFDB3CB9D4F1376398EF /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A09768D59E2D4F866BF4B2 /* Logger.swift */; };
 		B63091C115EC951353A3A194 /* UITestHarness.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB1A514E289240033BD7C72 /* UITestHarness.swift */; };
 		B68173AF9F88C5DAA9771130 /* MarkdownPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133AC95D825DA19766B4E39E /* MarkdownPreviewView.swift */; };
@@ -108,6 +109,7 @@
 		38854494F0D8A282254A7636 /* AutosaveCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutosaveCoordinator.swift; sourceTree = "<group>"; };
 		3C6B1D50F886288FF607C68B /* DocumentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentModels.swift; sourceTree = "<group>"; };
 		41F323F7D230F94FEED7A709 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		49FBD3258F9C9A51E710001D /* UITestKernelClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestKernelClient.swift; sourceTree = "<group>"; };
 		4ACDE4A140F43C4450C07853 /* LocalNotebook.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LocalNotebook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E701C8E7A6211F55568A53F /* DocumentEditorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentEditorStore.swift; sourceTree = "<group>"; };
 		57A09768D59E2D4F866BF4B2 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 				64CAAD225987160E6989D52A /* PythonBridge.h */,
 				F6A95548AE660E905318A08F /* PythonBridge.mm */,
 				838045D6F950243BB957D280 /* PythonSessionActor.swift */,
+				49FBD3258F9C9A51E710001D /* UITestKernelClient.swift */,
 			);
 			path = Execution;
 			sourceTree = "<group>";
@@ -671,6 +674,7 @@
 				CF989DF3A727B0CF33BAEF1E /* SettingsView.swift in Sources */,
 				3DCBC3D7CF924CDA23329DD5 /* TextDocumentEditorView.swift in Sources */,
 				B63091C115EC951353A3A194 /* UITestHarness.swift in Sources */,
+				95B9B7D0494CD1E561653852 /* UITestKernelClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

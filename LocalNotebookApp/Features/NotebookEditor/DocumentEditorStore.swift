@@ -23,7 +23,13 @@ final class DocumentEditorStore {
     init(documentID: UUID, appSession: AppSessionStore, kernel: (any KernelClient)? = nil) {
         self.documentID = documentID
         self.appSession = appSession
-        self.kernel = kernel ?? LocalPythonKernel(sessionID: documentID)
+        if let kernel {
+            self.kernel = kernel
+        } else if UITestHarness.isEnabled {
+            self.kernel = UITestKernelClient(sessionID: documentID)
+        } else {
+            self.kernel = LocalPythonKernel(sessionID: documentID)
+        }
     }
 
     deinit {

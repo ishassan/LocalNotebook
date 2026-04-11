@@ -14,6 +14,7 @@ struct NotebookEditorView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 statusHeader
+                primaryActionStrip
                 ForEach(Array((store.notebook?.cells ?? []).enumerated()), id: \.element.id) { index, cell in
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -76,7 +77,6 @@ struct NotebookEditorView: View {
                 Button("Save") {
                     Task { await store.save() }
                 }
-                .accessibilityIdentifier("save-document")
                 Menu {
                     Button("Rename") {
                         renameText = store.title
@@ -95,7 +95,6 @@ struct NotebookEditorView: View {
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
-                .accessibilityIdentifier("notebook-menu")
             }
             ToolbarItemGroup(placement: .bottomBar) {
                 Button {
@@ -114,7 +113,6 @@ struct NotebookEditorView: View {
                 } label: {
                     Label("Run All", systemImage: "play.fill")
                 }
-                .accessibilityIdentifier("run-all")
             }
         }
         .alert("Rename Notebook", isPresented: $renamePromptShown) {
@@ -158,6 +156,44 @@ struct NotebookEditorView: View {
         }
         .padding(16)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    private var primaryActionStrip: some View {
+        HStack(spacing: 12) {
+            Button("Save") {
+                Task { await store.save() }
+            }
+            .buttonStyle(.bordered)
+            .accessibilityIdentifier("save-document")
+
+            Button("Run All") {
+                Task { await store.runAll() }
+            }
+            .buttonStyle(.borderedProminent)
+            .accessibilityIdentifier("run-all")
+
+            Menu {
+                Button("Rename") {
+                    renameText = store.title
+                    renamePromptShown = true
+                }
+                Button("Duplicate") {
+                    Task { _ = await store.duplicate() }
+                }
+                Button("Export") {
+                    exportDocument = try? store.exportDocumentData()
+                    exportShown = exportDocument != nil
+                }
+                Button("Clear Outputs") {
+                    store.clearOutputs()
+                }
+            } label: {
+                Label("Actions", systemImage: "ellipsis.circle")
+            }
+            .buttonStyle(.bordered)
+            .accessibilityIdentifier("notebook-menu")
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder

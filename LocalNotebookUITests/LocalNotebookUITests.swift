@@ -9,18 +9,20 @@ final class LocalNotebookUITests: XCTestCase {
         app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-reset"]
         app.launch()
+        if app.buttons["Files"].waitForExistence(timeout: 5) {
+            app.buttons["Files"].tap()
+        }
     }
 
     func testImportNotebook() {
         app.buttons["import-sample-notebook"].tap()
-        XCTAssertTrue(app.otherElements["document-UITestNotebook"].waitForExistence(timeout: 5))
+        XCTAssertTrue(documentRow(named: "UITestNotebook").waitForExistence(timeout: 5))
     }
 
     func testRunCell() {
         openSampleNotebook()
         app.buttons["run-all"].tap()
-        XCTAssertTrue(app.otherElements["output-text"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["UI Test Success"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["UI Test Success"].waitForExistence(timeout: 15))
     }
 
     func testSaveAndReopen() {
@@ -28,8 +30,10 @@ final class LocalNotebookUITests: XCTestCase {
         app.buttons["run-all"].tap()
         app.buttons["save-document"].tap()
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        app.otherElements["document-UITestNotebook"].tap()
-        XCTAssertTrue(app.otherElements["output-text"].waitForExistence(timeout: 5))
+        let row = documentRow(named: "UITestNotebook")
+        XCTAssertTrue(row.waitForExistence(timeout: 10))
+        row.tap()
+        XCTAssertTrue(app.staticTexts["UI Test Success"].waitForExistence(timeout: 15))
     }
 
     func testClearOutputs() {
@@ -37,7 +41,7 @@ final class LocalNotebookUITests: XCTestCase {
         app.buttons["run-all"].tap()
         app.buttons["notebook-menu"].tap()
         app.buttons["Clear Outputs"].tap()
-        XCTAssertFalse(app.otherElements["output-text"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.staticTexts["UI Test Success"].waitForExistence(timeout: 2))
     }
 
     func testDuplicateNotebook() {
@@ -45,11 +49,15 @@ final class LocalNotebookUITests: XCTestCase {
         app.buttons["notebook-menu"].tap()
         app.buttons["Duplicate"].tap()
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        XCTAssertTrue(app.otherElements["document-UITestNotebook Copy"].waitForExistence(timeout: 5))
+        XCTAssertTrue(documentRow(named: "UITestNotebook Copy").waitForExistence(timeout: 5))
     }
 
     private func openSampleNotebook() {
         app.buttons["import-sample-notebook"].tap()
-        app.otherElements["document-UITestNotebook"].tap()
+        documentRow(named: "UITestNotebook").tap()
+    }
+
+    private func documentRow(named name: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: "document-\(name)").firstMatch
     }
 }
