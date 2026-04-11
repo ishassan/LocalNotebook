@@ -1,0 +1,998 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01A01A382117ABCE07BC0FC7 /* RunningSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B958C24EA8BD61C6098E19EF /* RunningSessionsView.swift */; };
+		0200DDAF4CB2D9EBAB5F647F /* Python.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7BD08E69FF565C138B8AA418 /* Python.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0775024FC85F2720D3B5F19D /* AutosaveCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38854494F0D8A282254A7636 /* AutosaveCoordinator.swift */; };
+		098040D5E73D87CF1552136A /* MarkdownAndOutputs.ipynb in Resources */ = {isa = PBXBuildFile; fileRef = 8592290DEA9A90D37C63A60C /* MarkdownAndOutputs.ipynb */; };
+		0B82D104C539F817D1CFB7BB /* FilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819E6EBB6E47B9AE64AB08F2 /* FilesView.swift */; };
+		1827162FE2C84BC7B6BD3450 /* PythonSessionActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838045D6F950243BB957D280 /* PythonSessionActor.swift */; };
+		1BBBFC9B48A5DFF86257FB34 /* pyplot.py in Resources */ = {isa = PBXBuildFile; fileRef = DEF235FF08E305E6A2C7F507 /* pyplot.py */; };
+		1E84B4F83F8DBCC022851E3B /* __init__.py in Resources */ = {isa = PBXBuildFile; fileRef = 64F18A2249A6B65023DF6B22 /* __init__.py */; };
+		26EBA0CDB976232D9169A271 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2CA628B2B0730333EB5D0B2 /* SettingsStore.swift */; };
+		2CCFE9022D19713A0C34D65E /* NotebookCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D67380192B3DEB0F65B16EE6 /* NotebookCell.swift */; };
+		2E901E0FADAB3095A324B701 /* RecentDocumentsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3F3E8546E9458D0FDD0D35 /* RecentDocumentsStore.swift */; };
+		312EBCC9483EF1FF671882D9 /* Python.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BD08E69FF565C138B8AA418 /* Python.xcframework */; };
+		327164637DC0CB52E8F84A32 /* AppSessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60E1F1BAAB402990E129D1D2 /* AppSessionStore.swift */; };
+		352002303D960B725F2D79B2 /* RecentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185EC4568731AC2C01BCCA9E /* RecentsView.swift */; };
+		353A14D5A290DC67A1AAABB0 /* DependencyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375AF7BCF03E43C603CD64B6 /* DependencyContainer.swift */; };
+		377FDC44EC670F64677DB042 /* Welcome.ipynb in Resources */ = {isa = PBXBuildFile; fileRef = E4F39F5EE79F5A03A72F43D2 /* Welcome.ipynb */; };
+		37F1BC7083A3DAF076906EED /* NotebookEditingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B73F77F95313194BEDEABD /* NotebookEditingTests.swift */; };
+		39C2ABBBD3B77D5912EE0EFC /* NotebookOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA23D0A4F7913508D2F99737 /* NotebookOutput.swift */; };
+		3C9AF70972210DB0131EF87E /* NotebookDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA9898C03C75EA64BE053AA8 /* NotebookDocument.swift */; };
+		3DCBC3D7CF924CDA23329DD5 /* TextDocumentEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8223970A7070CDB4BAC6EE0 /* TextDocumentEditorView.swift */; };
+		418CC83D3F62078E5821FC67 /* HTMLContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D91C131C59FDD53D2E2F08B4 /* HTMLContentView.swift */; };
+		44AD3A2134C0E8BE3724D495 /* DocumentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C6B1D50F886288FF607C68B /* DocumentModels.swift */; };
+		483860E79B9F70A16D39D023 /* OutputRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D003219B120EE7AAED631DC8 /* OutputRenderer.swift */; };
+		5013D3A956CD34974075C898 /* ExecutionSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5236A30C4091115D77BFA8 /* ExecutionSessionTests.swift */; };
+		56F1C04E1210A3178A77A51D /* kernel_bridge.py in Resources */ = {isa = PBXBuildFile; fileRef = 243EB638BEED68FEA10E8985 /* kernel_bridge.py */; };
+		5DB4715E401CD9E21664E27D /* SecurityScopedBookmarkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6485942685E715FBC10131B /* SecurityScopedBookmarkStore.swift */; };
+		5FDCE2A07CBE05BB89C8F981 /* UITestNotebook.ipynb in Resources */ = {isa = PBXBuildFile; fileRef = 024A15346F63E126DEF5F823 /* UITestNotebook.ipynb */; };
+		6012CBF7FDCF7B465AD0222A /* LocalNotebookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C102CF38E8E07950551223A /* LocalNotebookApp.swift */; };
+		60793559A84645F80306BBC0 /* PythonBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6A95548AE660E905318A08F /* PythonBridge.mm */; };
+		6C95471FAD350AE0BE8B11F8 /* ScriptEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1FC880D49896A012C57213 /* ScriptEditorView.swift */; };
+		6F84FF6DC2BE61988833E767 /* ExportFileDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB6CAB559DAB7E9B68F7240C /* ExportFileDocument.swift */; };
+		6FD0FFCE40D7671DF45F9357 /* NotebookEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92328E94BAB0B55B038E1C3B /* NotebookEditorView.swift */; };
+		70B094B06E07D1F3F9C7F9D5 /* DocumentRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CA6467A4B7121B2C561265 /* DocumentRepository.swift */; };
+		711170719404D71F103C97EB /* LocalNotebookUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9EA0F6EC2E154F6F6F0ADF0 /* LocalNotebookUITests.swift */; };
+		72A284B34FBAB2DD338A9D9F /* NotebookCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB51B5680790DB4840A1CB10 /* NotebookCodec.swift */; };
+		7D56F70BD781E589C14A2657 /* CodeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDFBBEA0A809D1FB02E9FAF8 /* CodeTextView.swift */; };
+		8D18244463603684BBDB5364 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F323F7D230F94FEED7A709 /* RootTabView.swift */; };
+		8D18B7EE2D09545013C469BA /* KernelModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145D7E30E8F15AFA92BB04D4 /* KernelModels.swift */; };
+		8D461AF61ECBB223D695EE96 /* MultilineTextValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591BAF0A2B9EF687DB25A253 /* MultilineTextValue.swift */; };
+		8E52B6BE1EF2030FE50F811A /* LocalPythonKernel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67EA7BA65A95DEBD9FB64B5B /* LocalPythonKernel.swift */; };
+		A459CFDB3CB9D4F1376398EF /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A09768D59E2D4F866BF4B2 /* Logger.swift */; };
+		B63091C115EC951353A3A194 /* UITestHarness.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB1A514E289240033BD7C72 /* UITestHarness.swift */; };
+		B68173AF9F88C5DAA9771130 /* MarkdownPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133AC95D825DA19766B4E39E /* MarkdownPreviewView.swift */; };
+		B72BA56B656A4D85100379EB /* AutosaveRecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8DAC394CA615A59D3B74D4F /* AutosaveRecoveryTests.swift */; };
+		BA6B191CAAD99F7A30F09FFF /* NotebookEditingReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE368ED335F77C78F94D272 /* NotebookEditingReducer.swift */; };
+		BAFF1DE5B55F796E3C9DBC65 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA439A4FB3112A86A9AC689A /* Errors.swift */; };
+		C81780EB446A2978C5890716 /* KernelClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 971996F74AE1E83768BA9105 /* KernelClient.swift */; };
+		CF989DF3A727B0CF33BAEF1E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF446276655154E8B8C98153 /* SettingsView.swift */; };
+		D6EADD8DB1E56DF2ADA1F504 /* DocumentEditorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E701C8E7A6211F55568A53F /* DocumentEditorStore.swift */; };
+		DB1E0D8ECFB8F092F6749B48 /* MatplotlibDemo.ipynb in Resources */ = {isa = PBXBuildFile; fileRef = 13FE02190B70ECEC82F3BA2C /* MatplotlibDemo.ipynb */; };
+		DBE2845CD299C0B7647C52F3 /* NotebookTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F3101942BBEA2115CC90827 /* NotebookTheme.swift */; };
+		E6CF65C24FF8CE3857E90499 /* NotebookCodecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C3657AB82C712ADDA15FE3 /* NotebookCodecTests.swift */; };
+		F767EACAE6A54FCF95ACBC31 /* DocumentSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E031991806174518F4F65424 /* DocumentSceneView.swift */; };
+		F8A3D4857B01F47AE77A7E1E /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EACAD32A075A1DFACE3E6B97 /* JSONValue.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E12D8FD8F0161961AA4AD5D7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C20BC45A48251D4C1A72C4B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E652F3E390853724DD511EFC;
+			remoteInfo = LocalNotebook;
+		};
+		F20E677107A10DA3D549623E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4C20BC45A48251D4C1A72C4B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E652F3E390853724DD511EFC;
+			remoteInfo = LocalNotebook;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		483CC994AD53A3D8B940FE0C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0200DDAF4CB2D9EBAB5F647F /* Python.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		024A15346F63E126DEF5F823 /* UITestNotebook.ipynb */ = {isa = PBXFileReference; path = UITestNotebook.ipynb; sourceTree = "<group>"; };
+		133AC95D825DA19766B4E39E /* MarkdownPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPreviewView.swift; sourceTree = "<group>"; };
+		13C1C0F5A0583BB9FB011456 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		13FE02190B70ECEC82F3BA2C /* MatplotlibDemo.ipynb */ = {isa = PBXFileReference; path = MatplotlibDemo.ipynb; sourceTree = "<group>"; };
+		145D7E30E8F15AFA92BB04D4 /* KernelModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernelModels.swift; sourceTree = "<group>"; };
+		185EC4568731AC2C01BCCA9E /* RecentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentsView.swift; sourceTree = "<group>"; };
+		243EB638BEED68FEA10E8985 /* kernel_bridge.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = kernel_bridge.py; sourceTree = "<group>"; };
+		2C1FC880D49896A012C57213 /* ScriptEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptEditorView.swift; sourceTree = "<group>"; };
+		36B73F77F95313194BEDEABD /* NotebookEditingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookEditingTests.swift; sourceTree = "<group>"; };
+		375AF7BCF03E43C603CD64B6 /* DependencyContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyContainer.swift; sourceTree = "<group>"; };
+		38854494F0D8A282254A7636 /* AutosaveCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutosaveCoordinator.swift; sourceTree = "<group>"; };
+		3C6B1D50F886288FF607C68B /* DocumentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentModels.swift; sourceTree = "<group>"; };
+		41F323F7D230F94FEED7A709 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		4ACDE4A140F43C4450C07853 /* LocalNotebook.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LocalNotebook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E701C8E7A6211F55568A53F /* DocumentEditorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentEditorStore.swift; sourceTree = "<group>"; };
+		57A09768D59E2D4F866BF4B2 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		591BAF0A2B9EF687DB25A253 /* MultilineTextValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextValue.swift; sourceTree = "<group>"; };
+		60AB5F27B5410B1CBFA1703C /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		60E1F1BAAB402990E129D1D2 /* AppSessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSessionStore.swift; sourceTree = "<group>"; };
+		64CAAD225987160E6989D52A /* PythonBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PythonBridge.h; sourceTree = "<group>"; };
+		64F18A2249A6B65023DF6B22 /* __init__.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = __init__.py; sourceTree = "<group>"; };
+		67EA7BA65A95DEBD9FB64B5B /* LocalPythonKernel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalPythonKernel.swift; sourceTree = "<group>"; };
+		6C402D57F9252DAF96C14D24 /* LocalNotebookTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LocalNotebookTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E3F3E8546E9458D0FDD0D35 /* RecentDocumentsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentDocumentsStore.swift; sourceTree = "<group>"; };
+		7BD08E69FF565C138B8AA418 /* Python.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Python.xcframework; path = Vendor/PythonRuntime/Python.xcframework; sourceTree = "<group>"; };
+		7F3101942BBEA2115CC90827 /* NotebookTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookTheme.swift; sourceTree = "<group>"; };
+		819E6EBB6E47B9AE64AB08F2 /* FilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesView.swift; sourceTree = "<group>"; };
+		838045D6F950243BB957D280 /* PythonSessionActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PythonSessionActor.swift; sourceTree = "<group>"; };
+		8592290DEA9A90D37C63A60C /* MarkdownAndOutputs.ipynb */ = {isa = PBXFileReference; path = MarkdownAndOutputs.ipynb; sourceTree = "<group>"; };
+		8AE368ED335F77C78F94D272 /* NotebookEditingReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookEditingReducer.swift; sourceTree = "<group>"; };
+		92328E94BAB0B55B038E1C3B /* NotebookEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookEditorView.swift; sourceTree = "<group>"; };
+		971996F74AE1E83768BA9105 /* KernelClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernelClient.swift; sourceTree = "<group>"; };
+		9C102CF38E8E07950551223A /* LocalNotebookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotebookApp.swift; sourceTree = "<group>"; };
+		9F5236A30C4091115D77BFA8 /* ExecutionSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutionSessionTests.swift; sourceTree = "<group>"; };
+		A1C3657AB82C712ADDA15FE3 /* NotebookCodecTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCodecTests.swift; sourceTree = "<group>"; };
+		AA9898C03C75EA64BE053AA8 /* NotebookDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookDocument.swift; sourceTree = "<group>"; };
+		AF446276655154E8B8C98153 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B6485942685E715FBC10131B /* SecurityScopedBookmarkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityScopedBookmarkStore.swift; sourceTree = "<group>"; };
+		B958C24EA8BD61C6098E19EF /* RunningSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunningSessionsView.swift; sourceTree = "<group>"; };
+		D003219B120EE7AAED631DC8 /* OutputRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputRenderer.swift; sourceTree = "<group>"; };
+		D67380192B3DEB0F65B16EE6 /* NotebookCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCell.swift; sourceTree = "<group>"; };
+		D91C131C59FDD53D2E2F08B4 /* HTMLContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLContentView.swift; sourceTree = "<group>"; };
+		DA23D0A4F7913508D2F99737 /* NotebookOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookOutput.swift; sourceTree = "<group>"; };
+		DA439A4FB3112A86A9AC689A /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		DB51B5680790DB4840A1CB10 /* NotebookCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotebookCodec.swift; sourceTree = "<group>"; };
+		DEF235FF08E305E6A2C7F507 /* pyplot.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = pyplot.py; sourceTree = "<group>"; };
+		E031991806174518F4F65424 /* DocumentSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSceneView.swift; sourceTree = "<group>"; };
+		E4F39F5EE79F5A03A72F43D2 /* Welcome.ipynb */ = {isa = PBXFileReference; path = Welcome.ipynb; sourceTree = "<group>"; };
+		E8DAC394CA615A59D3B74D4F /* AutosaveRecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutosaveRecoveryTests.swift; sourceTree = "<group>"; };
+		E9CA6467A4B7121B2C561265 /* DocumentRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentRepository.swift; sourceTree = "<group>"; };
+		EACAD32A075A1DFACE3E6B97 /* JSONValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValue.swift; sourceTree = "<group>"; };
+		ECB1A514E289240033BD7C72 /* UITestHarness.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestHarness.swift; sourceTree = "<group>"; };
+		EDFBBEA0A809D1FB02E9FAF8 /* CodeTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeTextView.swift; sourceTree = "<group>"; };
+		F2CA628B2B0730333EB5D0B2 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		F6A95548AE660E905318A08F /* PythonBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PythonBridge.mm; sourceTree = "<group>"; };
+		F8223970A7070CDB4BAC6EE0 /* TextDocumentEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextDocumentEditorView.swift; sourceTree = "<group>"; };
+		F9EA0F6EC2E154F6F6F0ADF0 /* LocalNotebookUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalNotebookUITests.swift; sourceTree = "<group>"; };
+		FA33676F897E8DEE16325626 /* LocalNotebook-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LocalNotebook-Bridging-Header.h"; sourceTree = "<group>"; };
+		FB6CAB559DAB7E9B68F7240C /* ExportFileDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportFileDocument.swift; sourceTree = "<group>"; };
+		FC7E0739BC4EB1DBDFB2A97B /* LocalNotebookUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LocalNotebookUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		62EAA4939798E971CCA5ECC6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				312EBCC9483EF1FF671882D9 /* Python.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		06DDA639EECF66A60CA2FCD6 /* Execution */ = {
+			isa = PBXGroup;
+			children = (
+				A20536CBDAB3FF77E36F42ED /* Models */,
+				971996F74AE1E83768BA9105 /* KernelClient.swift */,
+				67EA7BA65A95DEBD9FB64B5B /* LocalPythonKernel.swift */,
+				64CAAD225987160E6989D52A /* PythonBridge.h */,
+				F6A95548AE660E905318A08F /* PythonBridge.mm */,
+				838045D6F950243BB957D280 /* PythonSessionActor.swift */,
+			);
+			path = Execution;
+			sourceTree = "<group>";
+		};
+		07B0DFBF666FF84ECEEF97CD /* Documents */ = {
+			isa = PBXGroup;
+			children = (
+				8D1A1D9419B1F9CBD30B2935 /* Models */,
+				E9CA6467A4B7121B2C561265 /* DocumentRepository.swift */,
+				6E3F3E8546E9458D0FDD0D35 /* RecentDocumentsStore.swift */,
+				B6485942685E715FBC10131B /* SecurityScopedBookmarkStore.swift */,
+			);
+			path = Documents;
+			sourceTree = "<group>";
+		};
+		0EB082DE1005A4FA6634FCB0 /* matplotlib */ = {
+			isa = PBXGroup;
+			children = (
+				64F18A2249A6B65023DF6B22 /* __init__.py */,
+				DEF235FF08E305E6A2C7F507 /* pyplot.py */,
+			);
+			path = matplotlib;
+			sourceTree = "<group>";
+		};
+		0FC47BF440E1B1633C42B3EA = {
+			isa = PBXGroup;
+			children = (
+				B5DBF156E558376A2BA1C600 /* Config */,
+				6C1985413E216EF2D2312C10 /* LocalNotebookApp */,
+				ABB59BFCF1E60BF1750D7980 /* LocalNotebookTests */,
+				3B45DB92E775E46986F59D9B /* LocalNotebookUITests */,
+				151254AEAB75EC7FC88C294B /* Resources */,
+				ADC3D5A7A628B5BAD3ED1EA3 /* Frameworks */,
+				443D6649134BE3E313E5140B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		151254AEAB75EC7FC88C294B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B30C473067244DF426CEA3E1 /* PythonApp */,
+				E863FFFA4167CEB7ACAFC419 /* SampleNotebooks */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		18D51687BCC094F135B5D712 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				DA439A4FB3112A86A9AC689A /* Errors.swift */,
+				FB6CAB559DAB7E9B68F7240C /* ExportFileDocument.swift */,
+				FA33676F897E8DEE16325626 /* LocalNotebook-Bridging-Header.h */,
+				57A09768D59E2D4F866BF4B2 /* Logger.swift */,
+				ECB1A514E289240033BD7C72 /* UITestHarness.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		197D32757F50AE77A8099F51 /* Rendering */ = {
+			isa = PBXGroup;
+			children = (
+				757938080567F71EBA4C41CE /* Theme */,
+				EDFBBEA0A809D1FB02E9FAF8 /* CodeTextView.swift */,
+				D91C131C59FDD53D2E2F08B4 /* HTMLContentView.swift */,
+				133AC95D825DA19766B4E39E /* MarkdownPreviewView.swift */,
+				D003219B120EE7AAED631DC8 /* OutputRenderer.swift */,
+			);
+			path = Rendering;
+			sourceTree = "<group>";
+		};
+		2080C7364FB6C308EF80D3B0 /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				819E6EBB6E47B9AE64AB08F2 /* FilesView.swift */,
+			);
+			path = Files;
+			sourceTree = "<group>";
+		};
+		27A0BE7736C5FFC21B2AC96E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				07B0DFBF666FF84ECEEF97CD /* Documents */,
+				06DDA639EECF66A60CA2FCD6 /* Execution */,
+				A10C44AF4EEC103F7F3C09AE /* NotebookModel */,
+				197D32757F50AE77A8099F51 /* Rendering */,
+				F43DF689954816AEB7F4AC5E /* Session */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		38238E3FCBFD3B87BF6023BB /* ScriptEditor */ = {
+			isa = PBXGroup;
+			children = (
+				2C1FC880D49896A012C57213 /* ScriptEditorView.swift */,
+			);
+			path = ScriptEditor;
+			sourceTree = "<group>";
+		};
+		3B45DB92E775E46986F59D9B /* LocalNotebookUITests */ = {
+			isa = PBXGroup;
+			children = (
+				F9EA0F6EC2E154F6F6F0ADF0 /* LocalNotebookUITests.swift */,
+			);
+			path = LocalNotebookUITests;
+			sourceTree = "<group>";
+		};
+		443D6649134BE3E313E5140B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4ACDE4A140F43C4450C07853 /* LocalNotebook.app */,
+				6C402D57F9252DAF96C14D24 /* LocalNotebookTests.xctest */,
+				FC7E0739BC4EB1DBDFB2A97B /* LocalNotebookUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		58F10DB65B74643553458FBA /* App */ = {
+			isa = PBXGroup;
+			children = (
+				375AF7BCF03E43C603CD64B6 /* DependencyContainer.swift */,
+				9C102CF38E8E07950551223A /* LocalNotebookApp.swift */,
+				41F323F7D230F94FEED7A709 /* RootTabView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		6C1985413E216EF2D2312C10 /* LocalNotebookApp */ = {
+			isa = PBXGroup;
+			children = (
+				58F10DB65B74643553458FBA /* App */,
+				27A0BE7736C5FFC21B2AC96E /* Core */,
+				B0AA3DB7647FD6336868110A /* Features */,
+				18D51687BCC094F135B5D712 /* Support */,
+			);
+			path = LocalNotebookApp;
+			sourceTree = "<group>";
+		};
+		757938080567F71EBA4C41CE /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				7F3101942BBEA2115CC90827 /* NotebookTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		871A50C4DEC496FBAA1C4F0F /* RunningSessions */ = {
+			isa = PBXGroup;
+			children = (
+				B958C24EA8BD61C6098E19EF /* RunningSessionsView.swift */,
+			);
+			path = RunningSessions;
+			sourceTree = "<group>";
+		};
+		8D1A1D9419B1F9CBD30B2935 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3C6B1D50F886288FF607C68B /* DocumentModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A10C44AF4EEC103F7F3C09AE /* NotebookModel */ = {
+			isa = PBXGroup;
+			children = (
+				EACAD32A075A1DFACE3E6B97 /* JSONValue.swift */,
+				591BAF0A2B9EF687DB25A253 /* MultilineTextValue.swift */,
+				D67380192B3DEB0F65B16EE6 /* NotebookCell.swift */,
+				DB51B5680790DB4840A1CB10 /* NotebookCodec.swift */,
+				AA9898C03C75EA64BE053AA8 /* NotebookDocument.swift */,
+				8AE368ED335F77C78F94D272 /* NotebookEditingReducer.swift */,
+				DA23D0A4F7913508D2F99737 /* NotebookOutput.swift */,
+			);
+			path = NotebookModel;
+			sourceTree = "<group>";
+		};
+		A20536CBDAB3FF77E36F42ED /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				145D7E30E8F15AFA92BB04D4 /* KernelModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		A407307D3F2570F5F9F20750 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				AF446276655154E8B8C98153 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		ABB59BFCF1E60BF1750D7980 /* LocalNotebookTests */ = {
+			isa = PBXGroup;
+			children = (
+				E8DAC394CA615A59D3B74D4F /* AutosaveRecoveryTests.swift */,
+				9F5236A30C4091115D77BFA8 /* ExecutionSessionTests.swift */,
+				A1C3657AB82C712ADDA15FE3 /* NotebookCodecTests.swift */,
+				36B73F77F95313194BEDEABD /* NotebookEditingTests.swift */,
+			);
+			path = LocalNotebookTests;
+			sourceTree = "<group>";
+		};
+		ADC3D5A7A628B5BAD3ED1EA3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7BD08E69FF565C138B8AA418 /* Python.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B0AA3DB7647FD6336868110A /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				2080C7364FB6C308EF80D3B0 /* Files */,
+				D669754FCFBE69CE958D0B32 /* NotebookEditor */,
+				BAC0BCA8EBEB752131AC3600 /* Recents */,
+				871A50C4DEC496FBAA1C4F0F /* RunningSessions */,
+				38238E3FCBFD3B87BF6023BB /* ScriptEditor */,
+				A407307D3F2570F5F9F20750 /* Settings */,
+				FB4668FE16173806E54BAB47 /* TextEditorFeature */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		B30C473067244DF426CEA3E1 /* PythonApp */ = {
+			isa = PBXGroup;
+			children = (
+				0EB082DE1005A4FA6634FCB0 /* matplotlib */,
+				243EB638BEED68FEA10E8985 /* kernel_bridge.py */,
+			);
+			path = PythonApp;
+			sourceTree = "<group>";
+		};
+		B5DBF156E558376A2BA1C600 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				13C1C0F5A0583BB9FB011456 /* Debug.xcconfig */,
+				60AB5F27B5410B1CBFA1703C /* Release.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		BAC0BCA8EBEB752131AC3600 /* Recents */ = {
+			isa = PBXGroup;
+			children = (
+				185EC4568731AC2C01BCCA9E /* RecentsView.swift */,
+			);
+			path = Recents;
+			sourceTree = "<group>";
+		};
+		D669754FCFBE69CE958D0B32 /* NotebookEditor */ = {
+			isa = PBXGroup;
+			children = (
+				4E701C8E7A6211F55568A53F /* DocumentEditorStore.swift */,
+				E031991806174518F4F65424 /* DocumentSceneView.swift */,
+				92328E94BAB0B55B038E1C3B /* NotebookEditorView.swift */,
+			);
+			path = NotebookEditor;
+			sourceTree = "<group>";
+		};
+		E863FFFA4167CEB7ACAFC419 /* SampleNotebooks */ = {
+			isa = PBXGroup;
+			children = (
+				8592290DEA9A90D37C63A60C /* MarkdownAndOutputs.ipynb */,
+				13FE02190B70ECEC82F3BA2C /* MatplotlibDemo.ipynb */,
+				024A15346F63E126DEF5F823 /* UITestNotebook.ipynb */,
+				E4F39F5EE79F5A03A72F43D2 /* Welcome.ipynb */,
+			);
+			path = SampleNotebooks;
+			sourceTree = "<group>";
+		};
+		F43DF689954816AEB7F4AC5E /* Session */ = {
+			isa = PBXGroup;
+			children = (
+				60E1F1BAAB402990E129D1D2 /* AppSessionStore.swift */,
+				38854494F0D8A282254A7636 /* AutosaveCoordinator.swift */,
+				F2CA628B2B0730333EB5D0B2 /* SettingsStore.swift */,
+			);
+			path = Session;
+			sourceTree = "<group>";
+		};
+		FB4668FE16173806E54BAB47 /* TextEditorFeature */ = {
+			isa = PBXGroup;
+			children = (
+				F8223970A7070CDB4BAC6EE0 /* TextDocumentEditorView.swift */,
+			);
+			path = TextEditorFeature;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		46A76DE6D8B535CB80541A94 /* LocalNotebookUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4EDCF0567182B59BE37A6EB /* Build configuration list for PBXNativeTarget "LocalNotebookUITests" */;
+			buildPhases = (
+				C0E4B48EDF48FA8DBCFF1E5D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E73BCB727ACA6B68014A415C /* PBXTargetDependency */,
+			);
+			name = LocalNotebookUITests;
+			packageProductDependencies = (
+			);
+			productName = LocalNotebookUITests;
+			productReference = FC7E0739BC4EB1DBDFB2A97B /* LocalNotebookUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		B28488FCCDA22E4C84B68A74 /* LocalNotebookTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 84808EFC43E1CE374365A4F9 /* Build configuration list for PBXNativeTarget "LocalNotebookTests" */;
+			buildPhases = (
+				C2E11CAB7F1877676C211119 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				05875AE1FC1B377E966B9E40 /* PBXTargetDependency */,
+			);
+			name = LocalNotebookTests;
+			packageProductDependencies = (
+			);
+			productName = LocalNotebookTests;
+			productReference = 6C402D57F9252DAF96C14D24 /* LocalNotebookTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E652F3E390853724DD511EFC /* LocalNotebook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5696489D567052E03761F2B0 /* Build configuration list for PBXNativeTarget "LocalNotebook" */;
+			buildPhases = (
+				D7EC05A41B763AD972728808 /* Sources */,
+				586366395897C007ADBDBDB5 /* Resources */,
+				62EAA4939798E971CCA5ECC6 /* Frameworks */,
+				483CC994AD53A3D8B940FE0C /* Embed Frameworks */,
+				2AE06D3BF3EFC20E0E86C4D3 /* Process Python Runtime */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LocalNotebook;
+			packageProductDependencies = (
+			);
+			productName = LocalNotebook;
+			productReference = 4ACDE4A140F43C4450C07853 /* LocalNotebook.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4C20BC45A48251D4C1A72C4B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					46A76DE6D8B535CB80541A94 = {
+						DevelopmentTeam = "";
+						TestTargetID = E652F3E390853724DD511EFC;
+					};
+					B28488FCCDA22E4C84B68A74 = {
+						DevelopmentTeam = "";
+					};
+					E652F3E390853724DD511EFC = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 827F47C48DE643A7373BB301 /* Build configuration list for PBXProject "LocalNotebook" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0FC47BF440E1B1633C42B3EA;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 443D6649134BE3E313E5140B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E652F3E390853724DD511EFC /* LocalNotebook */,
+				B28488FCCDA22E4C84B68A74 /* LocalNotebookTests */,
+				46A76DE6D8B535CB80541A94 /* LocalNotebookUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		586366395897C007ADBDBDB5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				098040D5E73D87CF1552136A /* MarkdownAndOutputs.ipynb in Resources */,
+				DB1E0D8ECFB8F092F6749B48 /* MatplotlibDemo.ipynb in Resources */,
+				5FDCE2A07CBE05BB89C8F981 /* UITestNotebook.ipynb in Resources */,
+				377FDC44EC670F64677DB042 /* Welcome.ipynb in Resources */,
+				1E84B4F83F8DBCC022851E3B /* __init__.py in Resources */,
+				56F1C04E1210A3178A77A51D /* kernel_bridge.py in Resources */,
+				1BBBFC9B48A5DFF86257FB34 /* pyplot.py in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2AE06D3BF3EFC20E0E86C4D3 /* Process Python Runtime */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Process Python Runtime";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/zsh;
+			shellScript = "set -eu\nFRAMEWORK=\"$PROJECT_DIR/Vendor/PythonRuntime/Python.xcframework\"\nif [ ! -f \"$FRAMEWORK/build/utils.sh\" ]; then\n  echo \"error: Missing Python.xcframework. Run ./Scripts/bootstrap_python_runtime.sh first.\"\n  exit 1\nfi\nsource \"$FRAMEWORK/build/utils.sh\"\ninstall_python \"Vendor/PythonRuntime/Python.xcframework\"\nPYTHON_VER=$(ls -1 \"$CODESIGNING_FOLDER_PATH/python/lib\" | grep -E '^python3\\\\.[0-9]+$' | head -n 1)\nmkdir -p \"$CODESIGNING_FOLDER_PATH/python/lib/$PYTHON_VER/site-packages\"\nrsync -au \"$PROJECT_DIR/Vendor/PythonRuntime/packages/\" \"$CODESIGNING_FOLDER_PATH/python/lib/$PYTHON_VER/site-packages/\"\nmkdir -p \"$CODESIGNING_FOLDER_PATH/PythonApp\"\nrsync -au \"$PROJECT_DIR/Resources/PythonApp/\" \"$CODESIGNING_FOLDER_PATH/PythonApp/\"\nmkdir -p \"$CODESIGNING_FOLDER_PATH/SampleNotebooks\"\nrsync -au \"$PROJECT_DIR/Resources/SampleNotebooks/\" \"$CODESIGNING_FOLDER_PATH/SampleNotebooks/\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C0E4B48EDF48FA8DBCFF1E5D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				711170719404D71F103C97EB /* LocalNotebookUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C2E11CAB7F1877676C211119 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B72BA56B656A4D85100379EB /* AutosaveRecoveryTests.swift in Sources */,
+				5013D3A956CD34974075C898 /* ExecutionSessionTests.swift in Sources */,
+				E6CF65C24FF8CE3857E90499 /* NotebookCodecTests.swift in Sources */,
+				37F1BC7083A3DAF076906EED /* NotebookEditingTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D7EC05A41B763AD972728808 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				327164637DC0CB52E8F84A32 /* AppSessionStore.swift in Sources */,
+				0775024FC85F2720D3B5F19D /* AutosaveCoordinator.swift in Sources */,
+				7D56F70BD781E589C14A2657 /* CodeTextView.swift in Sources */,
+				353A14D5A290DC67A1AAABB0 /* DependencyContainer.swift in Sources */,
+				D6EADD8DB1E56DF2ADA1F504 /* DocumentEditorStore.swift in Sources */,
+				44AD3A2134C0E8BE3724D495 /* DocumentModels.swift in Sources */,
+				70B094B06E07D1F3F9C7F9D5 /* DocumentRepository.swift in Sources */,
+				F767EACAE6A54FCF95ACBC31 /* DocumentSceneView.swift in Sources */,
+				BAFF1DE5B55F796E3C9DBC65 /* Errors.swift in Sources */,
+				6F84FF6DC2BE61988833E767 /* ExportFileDocument.swift in Sources */,
+				0B82D104C539F817D1CFB7BB /* FilesView.swift in Sources */,
+				418CC83D3F62078E5821FC67 /* HTMLContentView.swift in Sources */,
+				F8A3D4857B01F47AE77A7E1E /* JSONValue.swift in Sources */,
+				C81780EB446A2978C5890716 /* KernelClient.swift in Sources */,
+				8D18B7EE2D09545013C469BA /* KernelModels.swift in Sources */,
+				6012CBF7FDCF7B465AD0222A /* LocalNotebookApp.swift in Sources */,
+				8E52B6BE1EF2030FE50F811A /* LocalPythonKernel.swift in Sources */,
+				A459CFDB3CB9D4F1376398EF /* Logger.swift in Sources */,
+				B68173AF9F88C5DAA9771130 /* MarkdownPreviewView.swift in Sources */,
+				8D461AF61ECBB223D695EE96 /* MultilineTextValue.swift in Sources */,
+				2CCFE9022D19713A0C34D65E /* NotebookCell.swift in Sources */,
+				72A284B34FBAB2DD338A9D9F /* NotebookCodec.swift in Sources */,
+				3C9AF70972210DB0131EF87E /* NotebookDocument.swift in Sources */,
+				BA6B191CAAD99F7A30F09FFF /* NotebookEditingReducer.swift in Sources */,
+				6FD0FFCE40D7671DF45F9357 /* NotebookEditorView.swift in Sources */,
+				39C2ABBBD3B77D5912EE0EFC /* NotebookOutput.swift in Sources */,
+				DBE2845CD299C0B7647C52F3 /* NotebookTheme.swift in Sources */,
+				483860E79B9F70A16D39D023 /* OutputRenderer.swift in Sources */,
+				60793559A84645F80306BBC0 /* PythonBridge.mm in Sources */,
+				1827162FE2C84BC7B6BD3450 /* PythonSessionActor.swift in Sources */,
+				2E901E0FADAB3095A324B701 /* RecentDocumentsStore.swift in Sources */,
+				352002303D960B725F2D79B2 /* RecentsView.swift in Sources */,
+				8D18244463603684BBDB5364 /* RootTabView.swift in Sources */,
+				01A01A382117ABCE07BC0FC7 /* RunningSessionsView.swift in Sources */,
+				6C95471FAD350AE0BE8B11F8 /* ScriptEditorView.swift in Sources */,
+				5DB4715E401CD9E21664E27D /* SecurityScopedBookmarkStore.swift in Sources */,
+				26EBA0CDB976232D9169A271 /* SettingsStore.swift in Sources */,
+				CF989DF3A727B0CF33BAEF1E /* SettingsView.swift in Sources */,
+				3DCBC3D7CF924CDA23329DD5 /* TextDocumentEditorView.swift in Sources */,
+				B63091C115EC951353A3A194 /* UITestHarness.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		05875AE1FC1B377E966B9E40 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E652F3E390853724DD511EFC /* LocalNotebook */;
+			targetProxy = F20E677107A10DA3D549623E /* PBXContainerItemProxy */;
+		};
+		E73BCB727ACA6B68014A415C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E652F3E390853724DD511EFC /* LocalNotebook */;
+			targetProxy = E12D8FD8F0161961AA4AD5D7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0EDD2E03365F65CD3549E8F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 13C1C0F5A0583BB9FB011456 /* Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = LocalNotebook;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		10FADCA8CADBB91112800AAE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Vendor/PythonRuntime",
+					"\"Vendor/PythonRuntime\"",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/Python.framework/Headers",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.localnotebook.ios;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "LocalNotebookApp/Support/LocalNotebook-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		2AD1C8327B8129F41240207B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.localnotebook.LocalNotebookUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LocalNotebook;
+			};
+			name = Debug;
+		};
+		479E6344355A2074AFB050CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 60AB5F27B5410B1CBFA1703C /* Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Config/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = LocalNotebook;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		5E5789F0482A35E3EDFCEE9F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.localnotebook.LocalNotebookTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LocalNotebook.app/LocalNotebook";
+			};
+			name = Debug;
+		};
+		9F411FF40EB504C83A283420 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.localnotebook.LocalNotebookUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LocalNotebook;
+			};
+			name = Release;
+		};
+		A9BFC519DF37E53E41D40497 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.localnotebook.LocalNotebookTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LocalNotebook.app/LocalNotebook";
+			};
+			name = Release;
+		};
+		B624BB6B76BD500287E963A2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Vendor/PythonRuntime",
+					"\"Vendor/PythonRuntime\"",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(BUILT_PRODUCTS_DIR)/Python.framework/Headers",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.localnotebook.ios;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "LocalNotebookApp/Support/LocalNotebook-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5696489D567052E03761F2B0 /* Build configuration list for PBXNativeTarget "LocalNotebook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B624BB6B76BD500287E963A2 /* Debug */,
+				10FADCA8CADBB91112800AAE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		827F47C48DE643A7373BB301 /* Build configuration list for PBXProject "LocalNotebook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0EDD2E03365F65CD3549E8F4 /* Debug */,
+				479E6344355A2074AFB050CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		84808EFC43E1CE374365A4F9 /* Build configuration list for PBXNativeTarget "LocalNotebookTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E5789F0482A35E3EDFCEE9F /* Debug */,
+				A9BFC519DF37E53E41D40497 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C4EDCF0567182B59BE37A6EB /* Build configuration list for PBXNativeTarget "LocalNotebookUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2AD1C8327B8129F41240207B /* Debug */,
+				9F411FF40EB504C83A283420 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4C20BC45A48251D4C1A72C4B /* Project object */;
+}

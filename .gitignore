@@ -1,0 +1,10 @@
+.DS_Store
+DerivedData/
+build/
+Vendor/PythonRuntime/Python.xcframework/*
+!Vendor/PythonRuntime/Python.xcframework/Info.plist
+Vendor/PythonRuntime/build/
+Vendor/PythonRuntime/dist/
+Vendor/PythonRuntime/packages/
+*.xcuserstate
+xcuserdata/

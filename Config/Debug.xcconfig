@@ -1,0 +1,2 @@
+#include? "Release.xcconfig"
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) DEBUG
