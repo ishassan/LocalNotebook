@@ -445,31 +445,26 @@ struct NotebookEditorView: View {
 
     private var floatingControls: some View {
         HStack(spacing: 14) {
-            floatingButton(
-                icon: "plus",
-                style: .primary,
-                accessibilityIdentifier: "plus"
-            ) {
-                insertTemplate(type: .code, source: "")
+            Menu {
+                addCellMenu
+            } label: {
+                FloatingCircleLabel(icon: "plus", style: .primary)
             }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("plus")
 
             Spacer(minLength: 0)
 
-            if editingCellID != nil, let selectedCellID {
-                Menu {
+            Menu {
+                if let selectedCellID {
                     cellActionMenu(for: selectedCellID)
-                } label: {
-                    FloatingCircleLabel(icon: "arrow.up")
                 }
+            } label: {
+                FloatingCircleLabel(icon: "bolt.fill", style: .secondary)
             }
-
-            floatingButton(
-                icon: "bolt.fill",
-                style: .secondary,
-                accessibilityIdentifier: "bolt.fill"
-            ) {
-                runSelectedCell()
-            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("bolt.fill")
+            .disabled(selectedCellID == nil)
 
             floatingButton(
                 icon: "play.fill",
@@ -487,53 +482,75 @@ struct NotebookEditorView: View {
 
     @ViewBuilder
     private func cellActionMenu(for cellID: String) -> some View {
-        Menu("Cell Type") {
+        Menu {
             cellTypeButton(title: "Code Cell", type: .code, cellID: cellID)
             cellTypeButton(title: "Markup Text Cell", type: .markdown, cellID: cellID)
             cellTypeButton(title: "Raw Text Cell", type: .raw, cellID: cellID)
+        } label: {
+            Label(currentCellTypeTitle(for: cellID), systemImage: currentCellTypeIcon(for: cellID))
         }
 
-        Button("Cut") {
+        Button {
             let replacementSelection = store.previousCellID(before: cellID) ?? store.nextCellID(after: cellID)
             store.cutCell(cellID)
             selectedCellID = replacementSelection
+        } label: {
+            Label("Cut", systemImage: "scissors")
         }
-        Button("Copy") {
+
+        Button {
             store.copyCell(cellID)
+        } label: {
+            Label("Copy", systemImage: "doc.on.doc")
         }
-        Button("Paste") {
+
+        Button {
             _ = store.pasteCell(into: cellID)
             selectedCellID = cellID
+        } label: {
+            Label("Paste", systemImage: "clipboard")
         }
 
-        Button("Move Up") {
+        Button {
             selectedCellID = store.moveCellUp(cellID)
+        } label: {
+            Label("Move Up", systemImage: "arrow.up.to.line")
         }
         .disabled(store.previousCellID(before: cellID) == nil)
 
-        Button("Move Down") {
+        Button {
             selectedCellID = store.moveCellDown(cellID)
+        } label: {
+            Label("Move Down", systemImage: "arrow.down.to.line")
         }
         .disabled(store.nextCellID(after: cellID) == nil)
 
-        Button("Merge Above") {
+        Button {
             selectedCellID = store.mergeCellAbove(cellID)
+        } label: {
+            Text("Merge Above")
         }
         .disabled(store.previousCellID(before: cellID) == nil)
 
-        Button("Merge Below") {
+        Button {
             selectedCellID = store.mergeCellBelow(cellID)
+        } label: {
+            Text("Merge Below")
         }
         .disabled(store.nextCellID(after: cellID) == nil)
 
-        Button("Delete Cell", role: .destructive) {
+        Button(role: .destructive) {
             let replacementSelection = store.previousCellID(before: cellID) ?? store.nextCellID(after: cellID)
             store.deleteCell(cellID)
             selectedCellID = replacementSelection
+        } label: {
+            Label("Delete Cell", systemImage: "trash")
         }
 
-        Button("Undo Cell Deletion") {
+        Button {
             selectedCellID = store.undoDelete()
+        } label: {
+            Label("Undo Cell Deletion", systemImage: "arrow.uturn.backward")
         }
     }
 
@@ -700,6 +717,57 @@ struct NotebookEditorView: View {
         .buttonStyle(.plain)
         .accessibilityIdentifier(accessibilityIdentifier)
     }
+
+    @ViewBuilder
+    private var addCellMenu: some View {
+        addCellButton(title: "Add Code Cell", icon: "curlybraces", type: .code)
+        addCellButton(title: "Add Markup Text Cell", icon: "chevron.left.forwardslash.chevron.right", type: .markdown)
+        addCellButton(title: "Add Raw Text Cell", icon: "a.square", type: .raw)
+    }
+
+    private func addCellButton(title: String, icon: String, type: NotebookCellType) -> some View {
+        Button {
+            insertTemplate(type: type, source: "")
+        } label: {
+            Label(title, systemImage: icon)
+        }
+    }
+
+    private func currentCellTypeTitle(for cellID: String) -> String {
+        guard let type = cells.first(where: { $0.id == cellID })?.cellType ?? store.notebook?.cells.first(where: { $0.id == cellID })?.cellType else {
+            return "Cell Type"
+        }
+        return cellTypeTitle(for: type)
+    }
+
+    private func currentCellTypeIcon(for cellID: String) -> String {
+        guard let type = cells.first(where: { $0.id == cellID })?.cellType ?? store.notebook?.cells.first(where: { $0.id == cellID })?.cellType else {
+            return "square"
+        }
+        return cellTypeIcon(for: type)
+    }
+
+    private func cellTypeTitle(for type: NotebookCellType) -> String {
+        switch type {
+        case .code:
+            "Code Cell"
+        case .markdown:
+            "Markup Text Cell"
+        case .raw:
+            "Raw Text Cell"
+        }
+    }
+
+    private func cellTypeIcon(for type: NotebookCellType) -> String {
+        switch type {
+        case .code:
+            "curlybraces"
+        case .markdown:
+            "chevron.left.forwardslash.chevron.right"
+        case .raw:
+            "a.square"
+        }
+    }
 }
 
 private struct FloatingCircleLabel: View {
@@ -834,7 +902,7 @@ private struct NotebookHelpView: View {
                 )
                 helpBlock(
                     title: "Running Code",
-                    text: "The bolt button runs the selected cell. The play button runs and advances. More runtime options live in the top-right menu."
+                    text: "The plus button inserts a new cell. The bolt button opens cell actions and type changes for the selected cell. The play button runs and advances."
                 )
                 helpBlock(
                     title: "Managing Cells",
