@@ -22,7 +22,7 @@ final class LocalNotebookUITests: XCTestCase {
     func testRunCell() {
         openSampleNotebook()
         app.buttons["run-all"].tap()
-        XCTAssertTrue(app.staticTexts["UI Test Success"].waitForExistence(timeout: 15))
+        XCTAssertTrue(outputText(containing: "UI Test Success").waitForExistence(timeout: 15))
     }
 
     func testSaveAndReopen() {
@@ -33,7 +33,7 @@ final class LocalNotebookUITests: XCTestCase {
         let row = documentRow(named: "UITestNotebook")
         XCTAssertTrue(row.waitForExistence(timeout: 10))
         row.tap()
-        XCTAssertTrue(app.staticTexts["UI Test Success"].waitForExistence(timeout: 15))
+        XCTAssertTrue(outputText(containing: "UI Test Success").waitForExistence(timeout: 15))
     }
 
     func testClearOutputs() {
@@ -41,7 +41,7 @@ final class LocalNotebookUITests: XCTestCase {
         app.buttons["run-all"].tap()
         app.buttons["notebook-menu"].tap()
         app.buttons["Clear Outputs"].tap()
-        XCTAssertFalse(app.staticTexts["UI Test Success"].waitForExistence(timeout: 2))
+        XCTAssertFalse(outputText(containing: "UI Test Success").waitForExistence(timeout: 2))
     }
 
     func testDuplicateNotebook() {
@@ -59,5 +59,9 @@ final class LocalNotebookUITests: XCTestCase {
 
     private func documentRow(named name: String) -> XCUIElement {
         app.descendants(matching: .any).matching(identifier: "document-\(name)").firstMatch
+    }
+
+    private func outputText(containing text: String) -> XCUIElement {
+        app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
     }
 }
