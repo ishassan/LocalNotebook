@@ -40,3 +40,7 @@ For plotting in the MVP, the app ships a lightweight pure-Python `matplotlib.pyp
 - `matplotlib` compatibility is intentionally partial and focused on common static plotting flows such as `plot()`, `scatter()`, `bar()`, labels, titles, and `show()`.
 - HTML/SVG output rendering is intentionally sandboxed and limited to notebook content, not arbitrary browsing.
 - UI tests use an in-app import harness instead of automating the system Files picker directly.
+
+## License
+
+LocalNotebook's original source code and project files are licensed under the MIT License. See [LICENSE](LICENSE). The CPython runtime, Python packages, and other third-party components downloaded or bundled by the build scripts remain under their own licenses and attribution terms.
